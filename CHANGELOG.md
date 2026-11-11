@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.5.0] - 2026-11-11
+
 ### Cambiado
 
 - Todas las cargas de contenido usan skeletons con la forma de cada pantalla en lugar del indicador "Cargando…":
