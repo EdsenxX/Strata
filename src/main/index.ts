@@ -16,6 +16,8 @@ import {
   configureDatabase,
   ensureDatabaseConnection
 } from './database/connection'
+// `?asset` copia el ícono junto al build y devuelve su ruta (también funciona empaquetado).
+import appIcon from '../../build/icon.png?asset'
 import { registerIpcHandlers } from './ipc/registerIpcHandlers'
 import { handleMediaRequest } from './services/imageService'
 import {
@@ -79,6 +81,8 @@ function createMainWindow(): BrowserWindow {
     minWidth: MAIN_WINDOW.MIN_WIDTH,
     minHeight: MAIN_WINDOW.MIN_HEIGHT,
     backgroundColor: getWindowBackgroundColor(),
+    // Ícono de la ventana (barra de tareas en Linux y en desarrollo); el instalador usa build/icon.png.
+    icon: appIcon,
     show: false,
     autoHideMenuBar: true,
     webPreferences: {

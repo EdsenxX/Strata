@@ -18,6 +18,7 @@ publish:
   repo: Strata
   releaseType: release
 win:
+  icon: build/icon.png
   target:
     - target: nsis
       arch: [x64]
@@ -26,6 +27,8 @@ nsis:
   allowToChangeInstallationDirectory: true
   artifactName: Strata-Setup-x64.${ext}
 linux:
+  # Carpeta con todos los tamaños (16–1024) generados por `npm run icon`.
+  icon: build/icons
   target:
     - target: AppImage
       arch: [x64]

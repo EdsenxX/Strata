@@ -25,7 +25,8 @@
     "dist:win": "npm run build && electron-builder --win --publish never",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "icon": "electron scripts/render-icon.cjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
