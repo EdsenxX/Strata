@@ -3,18 +3,21 @@
  * Trabaja nativamente con Markdown: recibe el valor inicial y emite cada cambio.
  *
  * Imágenes: se insertan con "/" → Imagen, pegándolas (Ctrl+V) o arrastrándolas. Se pueden
- * redimensionar con el asa inferior, agregar leyenda y mover con el asa de bloque (⋮⋮).
+ * redimensionar desde los bordes laterales y esquinas (o el asa inferior), agregar leyenda y mover
+ * con el asa de bloque (⋮⋮).
  * `onUploadImage` las guarda y devuelve la URL que queda en el Markdown.
  *
  * Es un componente no controlado: para cargar otro documento, cambia su `key`.
  */
 import { useEffect, useRef, useState } from 'react'
 import { Crepe } from '@milkdown/crepe'
+import { editorViewCtx } from '@milkdown/kit/core'
 import { uploadConfig, type Uploader } from '@milkdown/kit/plugin/upload'
 import type { Node as ProseNode } from '@milkdown/kit/prose/model'
 import { Decoration } from '@milkdown/kit/prose/view'
 import { EDITOR_TEXTS, TASK_TEXTS } from '@shared/constants'
 import { EditorSkeleton } from '../skeletons/EditorSkeleton'
+import { enableImageEdgeResize } from './imageEdgeResize'
 import '../../styles/editor.css'
 
 /** Traducción al español del menú "/" (solo etiquetas; los iconos son los de Crepe). */
@@ -146,8 +149,12 @@ export function MarkdownEditor({ initialValue, onChange, onUploadImage }: Markdo
     })
 
     const creation = crepe.create()
+    const disableEdgeResize = enableImageEdgeResize(root, () =>
+      crepe.editor.action((ctx) => ctx.get(editorViewCtx))
+    )
     void creation.then(() => setReady(true))
     return () => {
+      disableEdgeResize()
       void creation.then(() => crepe.destroy())
     }
   }, [])

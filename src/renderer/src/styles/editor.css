@@ -55,3 +55,55 @@
     inset 2px 2px 5px var(--neu-shadow-dark),
     inset -2px -2px 5px var(--neu-shadow-light);
 }
+
+/*
+ * Redimensionado desde los bordes (ver imageEdgeResize.ts): al acercarse a un borde lateral o una
+ * esquina, la imagen muestra un contorno de acento y barras de agarre a los lados.
+ */
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper img {
+  transition: outline-color var(--strata-duration, 0.15s);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper img[data-resize-edge] {
+  outline-color: color-mix(in srgb, var(--neu-accent) 70%, transparent);
+}
+
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper::before,
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 44px;
+  max-height: 40%;
+  border-radius: 999px;
+  background: var(--neu-bg);
+  border: 1px solid color-mix(in srgb, var(--neu-text) 25%, transparent);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 1;
+}
+
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper::before {
+  left: 6px;
+}
+
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper::after {
+  right: 6px;
+}
+
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper:hover::before,
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper:hover::after {
+  opacity: 1;
+}
+
+/* El asa inferior de Crepe también se muestra al pasar el cursor, más visible. */
+.strata-editor .milkdown .milkdown-image-block > .image-wrapper > .image-resize-handle {
+  cursor: ns-resize;
+}

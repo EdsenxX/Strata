@@ -52,3 +52,13 @@ export const ASYNC_STATUS = {
 } as const
 
 export type AsyncStatus = (typeof ASYNC_STATUS)[keyof typeof ASYNC_STATUS]
+
+/** Redimensionado de imágenes desde sus bordes en el editor. */
+export const IMAGE_RESIZE = {
+  /** Distancia al borde (px) en la que aparece el cursor de redimensionar. */
+  EDGE_THRESHOLD_PX: 12,
+  /** Alto mínimo de una imagen (igual que el mínimo de Crepe). */
+  MIN_HEIGHT_PX: 100,
+  /** Decimales con los que se guarda la proporción en el Markdown. */
+  RATIO_DECIMALS: 2
+} as const
