@@ -7,6 +7,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Cambiado
+
+- Todas las cargas de contenido usan skeletons con la forma de cada pantalla en lugar del indicador "Cargando…":
+  arranque, entornos, proyectos, vista de proyecto, tareas, detalle de tarea, editor, estados y actualizaciones.
+
 ## [0.4.0] - 2026-11-11
 
 ### Agregado

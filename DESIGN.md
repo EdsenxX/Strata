@@ -82,32 +82,35 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 
 ### UI base (`components/ui`)
 
-| Componente                                             | Descripción                                                                                                                                            |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Button`                                               | Variantes `BUTTON_VARIANTS` (`neutral`, `primary`, `danger`, `ghost`), tamaños `BUTTON_SIZES`, `icon`, `iconOnly` (requiere `aria-label`) y `loading`. |
-| `Card`                                                 | Superficie elevada con `rounded-neu` y `p-6`.                                                                                                          |
-| `TextField` / `TextArea`                               | Campo hundido con etiqueta, error, pista y contenido a la derecha (`trailing`). `insetFieldClasses` para inputs sueltos.                               |
-| `FieldLabel` / `RequiredFieldsNote`                    | Etiqueta con `*` rojo para campos `required` y leyenda "\* Campos obligatorios" bajo los campos.                                                       |
-| `PasswordField`                                        | `TextField` con botón mostrar/ocultar.                                                                                                                 |
-| `PasswordChecklist`                                    | Checklist en vivo de `evaluatePassword()`.                                                                                                             |
-| `Modal`                                                | Diálogo con overlay; cierra con Escape o clic fuera.                                                                                                   |
-| `ConfirmDialog`                                        | Confirmación de acciones destructivas con manejo de error.                                                                                             |
-| `StatusBadge`                                          | Insignia de un estado del catálogo del usuario (`statusId`). Colores en `statusColors.ts` (`STATUS_COLOR_CLASSES`).                                    |
-| `ProgressBar`                                          | Pista hundida con relleno `success`.                                                                                                                   |
-| `EmptyState`, `LoadingState`, `ErrorBanner`, `Spinner` | Estados vacíos, de carga y de error.                                                                                                                   |
-| `VersionBadge`                                         | Versión de la app (`__APP_VERSION__`).                                                                                                                 |
-| `ThemeSwitcher`                                        | Selector de tema con la opción activa hundida. Variantes `THEME_SWITCHER_VARIANTS`: `compact` (iconos) y `cards` (tarjetas con texto).                 |
-| `Toggle`                                               | Interruptor (`role="switch"`) con etiqueta y pista: pista hundida y perilla elevada que se vuelve de acento al activarse.                              |
+| Componente                          | Descripción                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Button`                            | Variantes `BUTTON_VARIANTS` (`neutral`, `primary`, `danger`, `ghost`), tamaños `BUTTON_SIZES`, `icon`, `iconOnly` (requiere `aria-label`) y `loading`. |
+| `Card`                              | Superficie elevada con `rounded-neu` y `p-6`.                                                                                                          |
+| `TextField` / `TextArea`            | Campo hundido con etiqueta, error, pista y contenido a la derecha (`trailing`). `insetFieldClasses` para inputs sueltos.                               |
+| `FieldLabel` / `RequiredFieldsNote` | Etiqueta con `*` rojo para campos `required` y leyenda "\* Campos obligatorios" bajo los campos.                                                       |
+| `PasswordField`                     | `TextField` con botón mostrar/ocultar.                                                                                                                 |
+| `PasswordChecklist`                 | Checklist en vivo de `evaluatePassword()`.                                                                                                             |
+| `Modal`                             | Diálogo con overlay; cierra con Escape o clic fuera.                                                                                                   |
+| `ConfirmDialog`                     | Confirmación de acciones destructivas con manejo de error.                                                                                             |
+| `StatusBadge`                       | Insignia de un estado del catálogo del usuario (`statusId`). Colores en `statusColors.ts` (`STATUS_COLOR_CLASSES`).                                    |
+| `ProgressBar`                       | Pista hundida con relleno `success`.                                                                                                                   |
+| `EmptyState`, `ErrorBanner`         | Estados vacíos y de error.                                                                                                                             |
+| `Skeleton`, `SkeletonGroup`         | Bloque de carga neumórfico (hundido, con pulso) y su contenedor accesible (`role="status"`, anuncia una sola vez aunque se aniden).                    |
+| `Spinner`                           | Solo para el estado `loading` de `Button` (acción en curso), nunca para cargar contenido.                                                              |
+| `VersionBadge`                      | Versión de la app (`__APP_VERSION__`).                                                                                                                 |
+| `ThemeSwitcher`                     | Selector de tema con la opción activa hundida. Variantes `THEME_SWITCHER_VARIANTS`: `compact` (iconos) y `cards` (tarjetas con texto).                 |
+| `Toggle`                            | Interruptor (`role="switch"`) con etiqueta y pista: pista hundida y perilla elevada que se vuelve de acento al activarse.                              |
 
 ### Composición
 
-| Carpeta   | Componentes                                                                                                                                       |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `layout`  | `AppShell` (barra lateral + contenido), `AuthLayout`, `PageHeader`, `Breadcrumbs`, `Logo`, `UpdateBanner` (aviso flotante de actualización lista) |
-| `forms`   | `NameFormModal` (entornos y fases), `ProjectFormModal`, `StatusFormModal` (nombre, color y categoría)                                             |
-| `tasks`   | `TimerButton`, `ElapsedTime`, `StatusSelector`, `ManualTimeModal`                                                                                 |
-| `editor`  | `MarkdownEditor` (Milkdown Crepe adaptado en `styles/editor.css`)                                                                                 |
-| `routing` | `ProtectedRoute`, `PublicOnlyRoute`                                                                                                               |
+| Carpeta     | Componentes                                                                                                                                                                                                                              |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `layout`    | `AppShell` (barra lateral + contenido), `AuthLayout`, `PageHeader`, `Breadcrumbs`, `Logo`, `UpdateBanner` (aviso flotante de actualización lista)                                                                                        |
+| `forms`     | `NameFormModal` (entornos y fases), `ProjectFormModal`, `StatusFormModal` (nombre, color y categoría)                                                                                                                                    |
+| `tasks`     | `TimerButton`, `ElapsedTime`, `StatusSelector`, `ManualTimeModal`                                                                                                                                                                        |
+| `editor`    | `MarkdownEditor` (Milkdown Crepe adaptado en `styles/editor.css`)                                                                                                                                                                        |
+| `routing`   | `ProtectedRoute`, `PublicOnlyRoute`                                                                                                                                                                                                      |
+| `skeletons` | `AppSkeleton` (arranque), `PageHeaderSkeleton`, `EnvironmentsGridSkeleton`, `ProjectsTableSkeleton`, `ProjectDetailSkeleton`, `TaskRowsSkeleton`, `TaskDetailSkeleton`, `EditorSkeleton`, `StatusRowsSkeleton`, `UpdatesSectionSkeleton` |
 
 ## Patrones
 
@@ -122,6 +125,12 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 - **Colores de estado**: los estados guardan una clave de `STATUS_COLORS`; se pintan con `STATUS_COLOR_CLASSES`.
   Los colores semánticos (gris, azul, ámbar, verde, violeta, rojo) usan los tokens del tema; turquesa y rosa usan la
   paleta 500 de Tailwind, legible en ambos temas.
+- **Carga de contenido: siempre skeletons, nunca spinners ni textos "Cargando…"**. Cada pantalla tiene un skeleton
+  que imita su forma real (mismas tarjetas, filas y columnas) para que no haya saltos al llegar los datos. Una
+  pantalla nueva debe traer su skeleton en `components/skeletons/`, compuesto con `Skeleton` dentro de un
+  `SkeletonGroup`. Las partes estáticas (encabezados con texto fijo) se muestran de inmediato; solo los datos usan
+  skeleton. Los componentes que dependen del catálogo de estados (`StatusBadge`, `StatusSelector`) muestran su
+  propio skeleton mientras llega.
 - **Acciones destructivas**: siempre con `ConfirmDialog` y variante `danger`.
 - **Guardado automático**: el editor muestra "Guardando…/Guardado" en `text-muted`; error en `text-danger`.
 - **Tamaño de ventana y scroll**: la ventana abre con un área de contenido de 1440 × 960 (`MAIN_WINDOW`), el alto
