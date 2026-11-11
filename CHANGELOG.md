@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.7.0] - 2026-11-11
+
 ### Agregado
 
 - Imágenes en el contenido de las tareas: se insertan con "/" → Imagen, pegándolas o arrastrándolas; se pueden
