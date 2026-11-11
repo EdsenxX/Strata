@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.7.1] - 2026-11-11
+
 ### Cambiado
 
 - Los avisos de actualización aclaran que solo Strata se cierra y se vuelve a abrir (no hace falta reiniciar el
