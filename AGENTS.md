@@ -192,6 +192,15 @@ Ninguna cadena o número con significado de negocio va suelto en el código:
   AppImage. En desarrollo el estado es `unsupported`.
 - Busca a los 10 s de abrir y cada 6 h (`UPDATE_SCHEDULE`). Con "descargar automáticamente" activo descarga en
   segundo plano; se instala con **Reiniciar e instalar** (`quitAndInstall`) o al cerrar la app.
+- **Actualizar al iniciar** (`installUpdatesOnStartup`, por defecto apagado): al abrir busca de inmediato; si hay
+  versión nueva la descarga e instala mostrando `StartupUpdateScreen` (se puede omitir). Si la búsqueda tarda más
+  de `STARTUP_CHECK_TIMEOUT_MS`, la app se abre normalmente.
+- La instalación es síncrona; antes se publica el estado `installing`. En `.deb` usa `pkexec` (pide contraseña):
+  si se cancela o falla, el estado vuelve a `downloaded` con `installFailed: true` (reintentable, y se instala al
+  cerrar). Ese caso **no** es un error de conexión (`error` queda solo para buscar/descargar).
+- Registro del actualizador: `userData/logs/updater.log` (`~/.config/Strata/logs/updater.log` en Linux).
+- **Probar el fallo de instalación sin contraseña real**: antepón al `PATH` de la app de prueba una carpeta con un
+  `pkexec` falso que termine con `exit 126`.
 - El estado se difunde a la interfaz con `IPC_EVENTS.UPDATES_STATE_CHANGED`; `updateStore` lo refleja en
   Configuración y en `UpdateBanner`.
 - La release debe incluir `latest.yml`, `latest-linux.yml` y `Strata-Setup-x64.exe.blockmap` además de los

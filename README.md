@@ -30,7 +30,8 @@ El nombre viene de _strata_ (estratos): cada nivel es una capa que envuelve a la
 - **Diseño neumórfico** con tema claro, oscuro o el del sistema (a elección, se recuerda por equipo) y fuentes locales (Plus Jakarta Sans, JetBrains Mono).
 - **Configuración**: tema claro, oscuro o del sistema, y actualizaciones.
 - **Actualizaciones automáticas**: busca versiones nuevas al abrir y cada pocas horas; se pueden descargar en
-  automático o a mano e instalar con un clic (**Reiniciar e instalar**).
+  automático o a mano e instalar con un clic (**Actualizar ahora**), o activar **Actualizar al iniciar** para que se
+  instalen al abrir la app. Solo se reinicia Strata, nunca el equipo.
 - **Versión visible** siempre en la interfaz.
 
 ## Descargas

@@ -7,6 +7,18 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Agregado
+
+- Opción **Actualizar al iniciar** en Configuración: al abrir Strata, si hay una versión nueva, se descarga e instala
+  antes de empezar, con una pantalla de progreso que se puede omitir.
+- Registro del actualizador en `logs/updater.log` dentro de la carpeta de datos de la app.
+
+### Corregido
+
+- Si la instalación de una actualización fallaba (por ejemplo, al cancelar la contraseña en Ubuntu), se mostraba
+  "Revisa tu conexión" aunque la versión ya estaba descargada. Ahora se explica el motivo, se muestra "Instalando…"
+  mientras ocurre y la actualización queda lista para reintentar.
+
 ## [0.8.0] - 2026-11-11
 
 ### Agregado
