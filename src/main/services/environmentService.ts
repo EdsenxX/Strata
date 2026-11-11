@@ -8,6 +8,7 @@ import { EnvironmentModel } from '../database/models/Environment'
 import { PhaseModel } from '../database/models/Phase'
 import { ProjectModel } from '../database/models/Project'
 import { TaskModel } from '../database/models/Task'
+import { TaskImageModel } from '../database/models/TaskImage'
 import { requireUserId } from '../session/sessionStore'
 import { requireFound, requireObject, requireObjectId, requireText } from '../utils/inputGuards'
 import { toEnvironmentDto } from './mappers'
@@ -70,6 +71,7 @@ export async function deleteEnvironment(rawId: unknown): Promise<null> {
   const userId = requireUserId()
   const environment = await findOwnedEnvironment(userId, requireObjectId(rawId))
   const filter = { userId, environmentId: environment._id }
+  await TaskImageModel.deleteMany(filter)
   await TaskModel.deleteMany(filter)
   await PhaseModel.deleteMany(filter)
   await ProjectModel.deleteMany(filter)

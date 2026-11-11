@@ -7,6 +7,7 @@ import type { ProjectDto } from '@shared/types'
 import { PhaseModel } from '../database/models/Phase'
 import { ProjectModel } from '../database/models/Project'
 import { TaskModel } from '../database/models/Task'
+import { TaskImageModel } from '../database/models/TaskImage'
 import { requireUserId } from '../session/sessionStore'
 import {
   optionalText,
@@ -126,6 +127,7 @@ export async function updateProject(raw: unknown): Promise<ProjectDto> {
 export async function deleteProject(rawId: unknown): Promise<null> {
   const userId = requireUserId()
   const project = await findOwnedProject(userId, requireObjectId(rawId))
+  await TaskImageModel.deleteMany({ userId, projectId: project._id })
   await TaskModel.deleteMany({ userId, projectId: project._id })
   await PhaseModel.deleteMany({ userId, projectId: project._id })
   await ProjectModel.deleteOne({ _id: project._id, userId })

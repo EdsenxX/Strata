@@ -2,8 +2,14 @@
  * Proceso principal de Electron: ventana, configuración, base de datos e IPC.
  */
 import { join } from 'node:path'
-import { app, BrowserWindow, dialog, nativeTheme, screen, shell } from 'electron'
-import { APP_ID, EXTERNAL_PROTOCOLS, MAIN_PROCESS_TEXTS, MAIN_WINDOW } from '@shared/constants'
+import { app, BrowserWindow, dialog, nativeTheme, protocol, screen, shell } from 'electron'
+import {
+  APP_ID,
+  EXTERNAL_PROTOCOLS,
+  MAIN_PROCESS_TEXTS,
+  MAIN_WINDOW,
+  MEDIA_PROTOCOL
+} from '@shared/constants'
 import { ConfigError, loadAppConfig } from './config/env'
 import {
   closeDatabaseConnection,
@@ -11,6 +17,7 @@ import {
   ensureDatabaseConnection
 } from './database/connection'
 import { registerIpcHandlers } from './ipc/registerIpcHandlers'
+import { handleMediaRequest } from './services/imageService'
 import { applyStoredThemeMode, getAutoDownloadUpdates } from './services/preferencesService'
 import { initializeUpdater } from './services/updaterService'
 
@@ -122,6 +129,7 @@ async function bootstrap(): Promise<void> {
   }
 
   registerIpcHandlers()
+  protocol.handle(MEDIA_PROTOCOL.SCHEME, handleMediaRequest)
   // Se conecta en segundo plano; si falla, cada llamada IPC reintentará.
   ensureDatabaseConnection().catch((error: unknown) =>
     console.error('[database] initial connection failed', error)
@@ -129,6 +137,14 @@ async function bootstrap(): Promise<void> {
   createMainWindow()
   initializeUpdater(await getAutoDownloadUpdates())
 }
+
+// El protocolo de imágenes debe declararse antes de que la app esté lista.
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: MEDIA_PROTOCOL.SCHEME,
+    privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true }
+  }
+])
 
 app.setAppUserModelId(APP_ID)
 

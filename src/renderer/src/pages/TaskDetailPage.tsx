@@ -31,6 +31,7 @@ import { cn } from '../components/ui/cn'
 import { useAsyncData } from '../hooks/useAsyncData'
 import { useDebouncedSave } from '../hooks/useDebouncedSave'
 import { formatDateTime } from '../utils/format'
+import { optimizeImage } from '../utils/imageOptimizer'
 
 const SAVE_STATUS_TEXT: Record<SaveStatus, string> = {
   [SAVE_STATUS.IDLE]: '',
@@ -78,6 +79,21 @@ export function TaskDetailPage() {
     [setData, taskId]
   )
   const contentSave = useDebouncedSave(saveContent)
+
+  // Optimiza y guarda la imagen; si falla, muestra el error y cancela la inserción en el editor.
+  const uploadImage = useCallback(
+    async (file: File) => {
+      try {
+        const image = await optimizeImage(file)
+        const { url } = await unwrap(api.images.upload({ taskId, ...image }))
+        return url
+      } catch (caught) {
+        setActionError(getErrorMessage(caught))
+        throw caught
+      }
+    },
+    [taskId]
+  )
 
   const runAction = async (action: () => Promise<TaskDto>) => {
     setBusy(true)
@@ -178,6 +194,7 @@ export function TaskDetailPage() {
             key={task.id}
             initialValue={task.content}
             onChange={contentSave.schedule}
+            onUploadImage={uploadImage}
           />
         </Card>
 

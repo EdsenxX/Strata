@@ -44,3 +44,14 @@
   font-weight: 700;
   letter-spacing: -0.01em;
 }
+
+.strata-editor .strata-upload-widget {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--neu-text-muted);
+  box-shadow:
+    inset 2px 2px 5px var(--neu-shadow-dark),
+    inset -2px -2px 5px var(--neu-shadow-light);
+}

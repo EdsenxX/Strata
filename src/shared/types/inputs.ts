@@ -67,6 +67,13 @@ export interface SetTaskTimeInput {
   timeSpentSeconds: number
 }
 
+export interface UploadImageInput {
+  taskId: string
+  mimeType: string
+  /** Bytes de la imagen (ya optimizada en la interfaz). */
+  data: Uint8Array
+}
+
 export interface CreateStatusInput {
   name: string
   color: StatusColor

@@ -6,6 +6,7 @@ import { FIELD_LIMITS } from '@shared/constants'
 import type { PhaseDto } from '@shared/types'
 import { PhaseModel } from '../database/models/Phase'
 import { TaskModel } from '../database/models/Task'
+import { TaskImageModel } from '../database/models/TaskImage'
 import { requireUserId } from '../session/sessionStore'
 import { requireFound, requireObject, requireObjectId, requireText } from '../utils/inputGuards'
 import { toPhaseDto, type PhaseStats } from './mappers'
@@ -86,6 +87,7 @@ export async function updatePhase(raw: unknown): Promise<PhaseDto> {
 export async function deletePhase(rawId: unknown): Promise<null> {
   const userId = requireUserId()
   const phase = await findOwnedPhase(userId, requireObjectId(rawId))
+  await TaskImageModel.deleteMany({ userId, phaseId: phase._id })
   await TaskModel.deleteMany({ userId, phaseId: phase._id })
   await PhaseModel.deleteOne({ _id: phase._id, userId })
   await touchProject(userId, phase.projectId)

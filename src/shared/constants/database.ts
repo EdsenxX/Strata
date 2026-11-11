@@ -18,7 +18,8 @@ export const MODEL_NAMES = {
   PROJECT: 'Project',
   PHASE: 'Phase',
   TASK: 'Task',
-  TASK_STATUS: 'TaskStatus'
+  TASK_STATUS: 'TaskStatus',
+  TASK_IMAGE: 'TaskImage'
 } as const
 
 /** Nombres de las colecciones en MongoDB. */
@@ -28,7 +29,8 @@ export const COLLECTION_NAMES = {
   PROJECTS: 'projects',
   PHASES: 'phases',
   TASKS: 'tasks',
-  TASK_STATUSES: 'task_statuses'
+  TASK_STATUSES: 'task_statuses',
+  TASK_IMAGES: 'task_images'
 } as const
 
 /** Tiempos de espera de la conexión (milisegundos). */

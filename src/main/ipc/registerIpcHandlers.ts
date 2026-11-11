@@ -13,6 +13,7 @@ import { ensureDatabaseConnection } from '../database/connection'
 import { AppError } from '../errors/AppError'
 import * as authService from '../services/authService'
 import * as environmentService from '../services/environmentService'
+import * as imageService from '../services/imageService'
 import * as phaseService from '../services/phaseService'
 import * as preferencesService from '../services/preferencesService'
 import * as projectService from '../services/projectService'
@@ -82,6 +83,8 @@ export function registerIpcHandlers(): void {
   handle(IPC_CHANNELS.TASKS_START_TIMER, taskService.startTaskTimer)
   handle(IPC_CHANNELS.TASKS_PAUSE_TIMER, taskService.pauseTaskTimer)
   handle(IPC_CHANNELS.TASKS_SET_TIME, taskService.setTaskTime)
+
+  handle(IPC_CHANNELS.IMAGES_UPLOAD, imageService.uploadImage)
 
   handle(IPC_CHANNELS.STATUSES_LIST, statusService.listStatuses)
   handle(IPC_CHANNELS.STATUSES_CREATE, statusService.createStatus)

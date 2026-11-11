@@ -34,6 +34,8 @@ export const IPC_CHANNELS = {
   TASKS_PAUSE_TIMER: 'tasks:pause-timer',
   TASKS_SET_TIME: 'tasks:set-time',
 
+  IMAGES_UPLOAD: 'images:upload',
+
   STATUSES_LIST: 'statuses:list',
   STATUSES_CREATE: 'statuses:create',
   STATUSES_UPDATE: 'statuses:update',

@@ -21,6 +21,7 @@ import type {
   CreateTaskInput,
   LoginInput,
   RegisterInput,
+  UploadImageInput,
   ReorderStatusesInput,
   SetTaskTimeInput,
   UpdateEnvironmentInput,
@@ -84,6 +85,10 @@ export interface StrataApi {
     startTimer: Call<string, TaskDto>
     pauseTimer: Call<string, TaskDto>
     setTime: Call<SetTaskTimeInput, TaskDto>
+  }
+  images: {
+    /** Guarda la imagen y devuelve la URL `strata-media://images/<id>` para el Markdown. */
+    upload: Call<UploadImageInput, { url: string }>
   }
   statuses: {
     list: CallWithoutInput<TaskStatusDto[]>

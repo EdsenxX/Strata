@@ -17,6 +17,7 @@ import {
 } from '@shared/constants'
 import type { TaskDto, TaskSummaryDto } from '@shared/types'
 import { TaskModel } from '../database/models/Task'
+import { TaskImageModel } from '../database/models/TaskImage'
 import { TaskStatusModel } from '../database/models/TaskStatus'
 import { AppError } from '../errors/AppError'
 import { requireUserId } from '../session/sessionStore'
@@ -118,6 +119,7 @@ export async function updateTask(raw: unknown): Promise<TaskDto> {
 export async function deleteTask(rawId: unknown): Promise<null> {
   const userId = requireUserId()
   const task = await findOwnedTaskDocument(userId, rawId)
+  await TaskImageModel.deleteMany({ userId, taskId: task._id })
   await TaskModel.deleteOne({ _id: task._id, userId })
   await touchProject(userId, task.projectId)
   return null

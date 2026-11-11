@@ -5,6 +5,7 @@
 import { APP_NAME } from './app'
 import { ENV_FILE_NAME, ENV_KEYS } from './database'
 import { ERROR_CODES, type ErrorCode } from './errorCodes'
+import { IMAGE_UPLOAD } from './media'
 import { THEME_MODES } from './preferences'
 import { UPDATE_STATUS, type UpdateStatus } from './updates'
 import {
@@ -86,6 +87,8 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ERROR_CODES.VALIDATION_FAILED]: 'Revisa los datos ingresados.',
   [ERROR_CODES.NOT_FOUND]: 'No encontramos lo que buscas. Puede que haya sido eliminado.',
   [ERROR_CODES.TIMER_RUNNING]: 'Pausa el cronómetro antes de editar el tiempo.',
+  [ERROR_CODES.IMAGE_TOO_LARGE]: `La imagen es demasiado grande (máximo ${IMAGE_UPLOAD.MAX_BYTES / 1024 / 1024} MB).`,
+  [ERROR_CODES.IMAGE_TYPE_NOT_ALLOWED]: 'Formato de imagen no soportado. Usa PNG, JPG, WebP o GIF.',
   [ERROR_CODES.STATUS_LAST_IN_CATEGORY]:
     'Cada categoría necesita al menos un estado. Crea otro en esa categoría antes de quitar este.',
   [ERROR_CODES.DATABASE_UNAVAILABLE]:
@@ -270,6 +273,12 @@ export const EDITOR_TEXTS = {
   ORDERED_LIST: 'Lista numerada',
   TASK_LIST: 'Lista de pendientes',
   GROUP_ADVANCED: 'Avanzado',
+  IMAGE: 'Imagen',
+  IMAGE_UPLOAD_BUTTON: 'Subir imagen',
+  IMAGE_UPLOAD_PLACEHOLDER: 'o pega el enlace de una imagen',
+  IMAGE_CAPTION_PLACEHOLDER: 'Escribe una leyenda…',
+  IMAGE_CONFIRM: 'Confirmar',
+  IMAGE_UPLOADING: 'Subiendo imagen…',
   CODE_BLOCK: 'Bloque de código',
   TABLE: 'Tabla',
   CODE_SEARCH_PLACEHOLDER: 'Buscar lenguaje',

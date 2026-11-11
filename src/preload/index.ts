@@ -48,6 +48,9 @@ const api: StrataApi = {
     pauseTimer: invoke(IPC_CHANNELS.TASKS_PAUSE_TIMER),
     setTime: invoke(IPC_CHANNELS.TASKS_SET_TIME)
   },
+  images: {
+    upload: invoke(IPC_CHANNELS.IMAGES_UPLOAD)
+  },
   statuses: {
     list: invoke(IPC_CHANNELS.STATUSES_LIST),
     create: invoke(IPC_CHANNELS.STATUSES_CREATE),
