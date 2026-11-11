@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.6.0] - 2026-11-11
+
 ### Agregado
 
 - Tiempo total por fase (suma de sus tareas) en las pestañas de fases y en el encabezado de la fase.
