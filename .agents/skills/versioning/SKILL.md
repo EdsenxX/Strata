@@ -69,6 +69,11 @@ La versión vive en **un solo lugar**: `package.json` → `version`. La interfaz
    ```
 9. **Reporta** la versión anterior, la nueva, el tipo de salto y el resumen del changelog.
    No hagas `git push` ni `git push --tags` salvo que el usuario lo pida.
+10. **Publicación** (solo si el usuario pidió subir la versión): `git push origin main` y luego
+    `git push origin v<X.Y.Z>`. La etiqueta dispara `.github/workflows/release.yml`, que verifica que coincida con
+    `package.json`, compila los instaladores de Windows y Ubuntu y crea la release con la sección del `CHANGELOG.md`.
+    Sigue la ejecución con `gh run list --workflow release.yml` / `gh run watch` y confirma los archivos con
+    `gh release view v<X.Y.Z>`.
 
 ## Verificación
 

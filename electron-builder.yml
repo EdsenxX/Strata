@@ -1,3 +1,5 @@
+# Configuración de empaquetado. Los nombres de los instaladores NO llevan versión para que
+# los enlaces "releases/latest/download/<archivo>" del README siempre apunten a la última release.
 appId: global.edsen.strata
 productName: Strata
 directories:
@@ -12,14 +14,18 @@ win:
   target:
     - target: nsis
       arch: [x64]
-  artifactName: ${productName}-${version}-setup.${ext}
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+  artifactName: Strata-Setup-x64.${ext}
 linux:
   target:
-    - AppImage
-    - deb
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
   category: Office
+  syncDesktopName: true
   maintainer: Eduardo Serrano
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  synopsis: Gestor de tareas por entornos, proyectos y fases
+  artifactName: Strata-x64.${ext}

@@ -4,9 +4,15 @@
   "version": "0.1.0",
   "description": "Gestor de tareas de escritorio organizado por entornos, proyectos y fases.",
   "main": "./out/main/index.js",
+  "desktopName": "strata.desktop",
   "author": "Eduardo Serrano",
   "license": "UNLICENSED",
   "private": true,
+  "homepage": "https://github.com/EdsenxX/Strata",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/EdsenxX/Strata.git"
+  },
   "scripts": {
     "dev": "electron-vite dev",
     "start": "electron-vite preview",
@@ -15,8 +21,8 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "lint": "eslint .",
     "build": "npm run typecheck && electron-vite build",
-    "dist:linux": "npm run build && electron-builder --linux",
-    "dist:win": "npm run build && electron-builder --win",
+    "dist:linux": "npm run build && electron-builder --linux --publish never",
+    "dist:win": "npm run build && electron-builder --win --publish never",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

@@ -1,0 +1,87 @@
+# Publica los instaladores de Windows y Ubuntu en GitHub Releases.
+# Se dispara al subir una etiqueta vX.Y.Z (la crea la skill `versioning`).
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Instaladores (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: dist:win
+            files: dist/Strata-Setup-x64.exe
+          - os: ubuntu-latest
+            script: dist:linux
+            files: |
+              dist/Strata-x64.AppImage
+              dist/Strata-x64.deb
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verificar que la etiqueta coincide con package.json
+        shell: bash
+        run: |
+          PACKAGE_VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$PACKAGE_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::La etiqueta $GITHUB_REF_NAME no coincide con package.json ($PACKAGE_VERSION)"
+            exit 1
+          fi
+
+      - name: Empaquetar
+        run: npm run ${{ matrix.script }}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: installers-${{ matrix.os }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
+
+  release:
+    name: Publicar release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Extraer notas de la versión desde CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v header="## [$VERSION]" '
+            /^## \[/ { if (found) exit; if (index($0, header) == 1) { found = 1; next } }
+            found
+          ' CHANGELOG.md > release-notes.md
+          test -s release-notes.md || echo "Versión $VERSION" > release-notes.md
+
+      - uses: actions/download-artifact@v8
+        with:
+          path: installers
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v3
+        with:
+          name: Strata ${{ github.ref_name }}
+          body_path: release-notes.md
+          files: installers/*
+          fail_on_unmatched_files: true
