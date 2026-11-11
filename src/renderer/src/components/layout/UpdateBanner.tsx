@@ -1,5 +1,6 @@
 import { RotateCcw, Sparkles } from 'lucide-react'
-import { SETTINGS_TEXTS, UPDATE_BANNER_TEXTS, UPDATE_STATUS } from '@shared/constants'
+import { PLATFORMS, SETTINGS_TEXTS, UPDATE_BANNER_TEXTS, UPDATE_STATUS } from '@shared/constants'
+import { api } from '../../api/client'
 import { useUpdateStore } from '../../stores/updateStore'
 import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../ui/Button'
 
@@ -25,6 +26,9 @@ export function UpdateBanner() {
             {UPDATE_BANNER_TEXTS.TITLE(update.availableVersion ?? '')}
           </p>
           <p className="text-xs text-muted">{UPDATE_BANNER_TEXTS.BODY}</p>
+          {api.platform === PLATFORMS.LINUX && (
+            <p className="text-xs text-muted">{UPDATE_BANNER_TEXTS.LINUX_PASSWORD_NOTE}</p>
+          )}
         </div>
       </div>
       <div className="flex justify-end gap-2">

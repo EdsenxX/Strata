@@ -26,5 +26,11 @@ export const MAIN_WINDOW = {
   BACKGROUND_COLOR_DARK: '#262a33'
 } as const
 
+/** Valores de `process.platform` que la interfaz necesita distinguir. */
+export const PLATFORMS = {
+  LINUX: 'linux',
+  WINDOWS: 'win32'
+} as const
+
 /** Protocolos que se permiten abrir en el navegador externo. */
 export const EXTERNAL_PROTOCOLS = ['https:', 'http:', 'mailto:'] as const

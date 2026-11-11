@@ -50,6 +50,8 @@ type Call<TInput, TOutput> = (input: TInput) => Promise<ApiResult<TOutput>>
 type CallWithoutInput<TOutput> = () => Promise<ApiResult<TOutput>>
 
 export interface StrataApi {
+  /** Sistema operativo (`process.platform`). */
+  platform: string
   auth: {
     register: Call<RegisterInput, UserDto>
     login: Call<LoginInput, UserDto>

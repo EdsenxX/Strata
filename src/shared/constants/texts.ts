@@ -297,10 +297,10 @@ export const SETTINGS_TEXTS = {
   CURRENT_VERSION: 'Versión instalada',
   AUTO_DOWNLOAD_LABEL: 'Descargar actualizaciones automáticamente',
   AUTO_DOWNLOAD_HINT:
-    'Las versiones nuevas se descargan en segundo plano y se instalan al reiniciar o cerrar la app.',
+    'Las versiones nuevas se descargan en segundo plano. Se instalan al presionar "Actualizar ahora" o la próxima vez que cierres Strata; nunca hace falta reiniciar tu equipo.',
   CHECK_NOW: 'Buscar actualizaciones',
   DOWNLOAD: 'Descargar',
-  RESTART_AND_INSTALL: 'Reiniciar e instalar',
+  RESTART_AND_INSTALL: 'Actualizar ahora',
   LATER: 'Más tarde',
   LAST_CHECKED: 'Última búsqueda'
 } as const
@@ -315,7 +315,7 @@ export const UPDATE_STATUS_TEXTS: Record<UpdateStatus, (version: string | null) 
   [UPDATE_STATUS.AVAILABLE]: (version) => `Hay una versión nueva disponible: v${version}.`,
   [UPDATE_STATUS.DOWNLOADING]: (version) => `Descargando v${version}…`,
   [UPDATE_STATUS.DOWNLOADED]: (version) =>
-    `La versión v${version} está lista. Reinicia Strata para instalarla.`,
+    `La versión v${version} está lista. Al actualizar, solo Strata se cierra y se vuelve a abrir.`,
   [UPDATE_STATUS.ERROR]: () =>
     'No se pudo completar la actualización. Revisa tu conexión e inténtalo de nuevo.'
 }
@@ -323,5 +323,7 @@ export const UPDATE_STATUS_TEXTS: Record<UpdateStatus, (version: string | null) 
 /** Aviso flotante cuando una actualización ya se descargó. */
 export const UPDATE_BANNER_TEXTS = {
   TITLE: (version: string): string => `Strata v${version} está lista`,
-  BODY: 'Reinicia para instalar la nueva versión.'
+  BODY: 'Strata se cerrará unos segundos, se actualizará y volverá a abrirse. No hace falta reiniciar tu equipo.',
+  /** Solo en Linux: el paquete .deb se instala con permisos de administrador. */
+  LINUX_PASSWORD_NOTE: 'Ubuntu te pedirá tu contraseña para instalarla.'
 } as const

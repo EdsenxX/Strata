@@ -12,6 +12,7 @@ const invoke =
     ipcRenderer.invoke(channel, input) as Promise<never>
 
 const api: StrataApi = {
+  platform: process.platform,
   auth: {
     register: invoke(IPC_CHANNELS.AUTH_REGISTER),
     login: invoke(IPC_CHANNELS.AUTH_LOGIN),
