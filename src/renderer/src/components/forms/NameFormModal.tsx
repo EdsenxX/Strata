@@ -4,6 +4,7 @@ import { getErrorMessage } from '../../api/client'
 import { BUTTON_VARIANTS, Button } from '../ui/Button'
 import { ErrorBanner } from '../ui/ErrorBanner'
 import { Modal } from '../ui/Modal'
+import { RequiredFieldsNote } from '../ui/RequiredFieldsNote'
 import { TextField } from '../ui/TextField'
 
 interface NameFormModalProps {
@@ -38,16 +39,15 @@ function NameForm({
   onClose
 }: NameFormModalProps) {
   const [name, setName] = useState(initialValue)
+  const [fieldError, setFieldError] = useState<string | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     const trimmed = name.trim()
-    if (!trimmed) {
-      setError(VALIDATION_TEXTS.REQUIRED)
-      return
-    }
+    setFieldError(trimmed ? undefined : VALIDATION_TEXTS.REQUIRED)
+    if (!trimmed) return
     setLoading(true)
     setError(null)
     try {
@@ -61,15 +61,18 @@ function NameForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <TextField
         label={label}
         placeholder={placeholder}
         value={name}
         maxLength={FIELD_LIMITS.ENTITY_NAME_MAX}
         autoFocus
+        required
+        error={fieldError}
         onChange={(event) => setName(event.target.value)}
       />
+      <RequiredFieldsNote />
       {error && <ErrorBanner message={error} />}
       <div className="flex justify-end gap-3">
         <Button variant={BUTTON_VARIANTS.GHOST} onClick={onClose}>

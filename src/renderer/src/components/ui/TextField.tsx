@@ -1,5 +1,6 @@
 import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
+import { FieldLabel } from './FieldLabel'
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
@@ -19,6 +20,7 @@ export function TextField({
   trailing,
   id,
   className,
+  required,
   ...props
 }: TextFieldProps) {
   const generatedId = useId()
@@ -27,12 +29,11 @@ export function TextField({
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <label htmlFor={inputId} className="pl-1 text-xs font-semibold text-muted">
-        {label}
-      </label>
+      <FieldLabel htmlFor={inputId} label={label} required={required} />
       <div className="relative">
         <input
           id={inputId}
+          required={required}
           aria-invalid={Boolean(error)}
           aria-describedby={error || hint ? messageId : undefined}
           className={cn(

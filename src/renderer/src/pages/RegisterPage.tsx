@@ -18,6 +18,7 @@ import { Card } from '../components/ui/Card'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
 import { PasswordChecklist } from '../components/ui/PasswordChecklist'
 import { PasswordField } from '../components/ui/PasswordField'
+import { RequiredFieldsNote } from '../components/ui/RequiredFieldsNote'
 import { TextField } from '../components/ui/TextField'
 import { useAuthStore } from '../stores/authStore'
 
@@ -42,6 +43,7 @@ export function RegisterPage() {
   const errors: RegisterErrors = submitted ? validateRegistration(form) : {}
 
   const bind = (field: RegisterField) => ({
+    required: true,
     value: form[field],
     error: errors[field],
     onChange: (event: ChangeEvent<HTMLInputElement>) =>
@@ -117,6 +119,7 @@ export function RegisterPage() {
           <div className="sm:col-span-2">
             <PasswordChecklist password={form.password} />
           </div>
+          <RequiredFieldsNote className="sm:col-span-2" />
           {serverError && (
             <div className="sm:col-span-2">
               <ErrorBanner message={serverError} />

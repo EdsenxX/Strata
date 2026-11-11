@@ -4,6 +4,7 @@ import { getErrorMessage } from '../../api/client'
 import { BUTTON_VARIANTS, Button } from '../ui/Button'
 import { ErrorBanner } from '../ui/ErrorBanner'
 import { Modal } from '../ui/Modal'
+import { RequiredFieldsNote } from '../ui/RequiredFieldsNote'
 import { TextArea } from '../ui/TextArea'
 import { TextField } from '../ui/TextField'
 
@@ -39,16 +40,15 @@ function ProjectForm({
   onClose
 }: ProjectFormModalProps) {
   const [values, setValues] = useState(initialValues)
+  const [nameError, setNameError] = useState<string | undefined>(undefined)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     const name = values.name.trim()
-    if (!name) {
-      setError(VALIDATION_TEXTS.REQUIRED)
-      return
-    }
+    setNameError(name ? undefined : VALIDATION_TEXTS.REQUIRED)
+    if (!name) return
     setLoading(true)
     setError(null)
     try {
@@ -62,17 +62,19 @@ function ProjectForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       <TextField
         label={PROJECT_TEXTS.NAME_LABEL}
         placeholder={PROJECT_TEXTS.NAME_PLACEHOLDER}
         value={values.name}
         maxLength={FIELD_LIMITS.ENTITY_NAME_MAX}
         autoFocus
+        required
+        error={nameError}
         onChange={(event) => setValues((current) => ({ ...current, name: event.target.value }))}
       />
       <TextArea
-        label={`${PROJECT_TEXTS.DESCRIPTION_LABEL} ${COMMON_TEXTS.OPTIONAL}`}
+        label={PROJECT_TEXTS.DESCRIPTION_LABEL}
         placeholder={PROJECT_TEXTS.DESCRIPTION_PLACEHOLDER}
         value={values.description}
         maxLength={FIELD_LIMITS.DESCRIPTION_MAX}
@@ -80,6 +82,7 @@ function ProjectForm({
           setValues((current) => ({ ...current, description: event.target.value }))
         }
       />
+      <RequiredFieldsNote />
       {error && <ErrorBanner message={error} />}
       <div className="flex justify-end gap-3">
         <Button variant={BUTTON_VARIANTS.GHOST} onClick={onClose}>

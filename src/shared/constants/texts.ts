@@ -22,7 +22,8 @@ export const COMMON_TEXTS = {
   RETRY: 'Reintentar',
   CLOSE: 'Cerrar',
   ACTIONS: 'Acciones',
-  OPTIONAL: '(opcional)',
+  REQUIRED_MARK: '*',
+  REQUIRED_FIELDS_NOTE: 'Campos obligatorios',
   NO_DESCRIPTION: 'Sin descripción'
 } as const
 
