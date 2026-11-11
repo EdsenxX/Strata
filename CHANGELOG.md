@@ -7,6 +7,14 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Agregado
+
+- La búsqueda del menú "/" del editor ignora acentos y mayúsculas: `/titulo`, `/codigo` o `/LISTA` encuentran
+  "Título 1", "Bloque de código" y las listas.
+
+- Las imágenes del editor se redimensionan arrastrando sus bordes laterales o esquinas: aparece el cursor de flechas,
+  un contorno de acento y barras de agarre a los lados, y el tamaño cambia en vivo conservando la proporción.
+
 ## [0.7.1] - 2026-11-11
 
 ### Cambiado

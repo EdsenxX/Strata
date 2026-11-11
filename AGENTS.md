@@ -113,6 +113,9 @@ src/
 - El Markdown solo guarda `![<proporción>](strata-media://images/<id> "<leyenda>")`. El protocolo privilegiado
   `strata-media` (registrado en `main/index.ts`, manejado por `imageService.handleMediaRequest`) entrega la imagen
   solo si pertenece al usuario con sesión. La CSP del renderer permite `img-src strata-media:`.
+- Redimensionado: además del asa inferior de Crepe, `components/editor/imageEdgeResize.ts` permite arrastrar los
+  bordes laterales y las esquinas (cursor de flechas, contorno de acento). Guarda la misma proporción que Crepe
+  (`ratio` = alto / alto original, en el `alt` del Markdown) mediante una transacción de ProseMirror.
 - `MarkdownEditor` reemplaza el subidor de Crepe (pegar/arrastrar) para omitir imágenes fallidas sin dejar el aviso
   de carga atascado.
 - Borrar una tarea, fase, proyecto o entorno borra sus imágenes. Quitar una imagen del texto no la borra de la base
@@ -236,4 +239,8 @@ Las skills viven en `.agents/skills/<nombre>/SKILL.md` (convención abierta de A
 - El editor Crepe es no controlado: para cargar otro documento cambia su `key`, no su valor.
 - La sesión persistente usa `safeStorage`; en Linux sin llavero (`basic_text`) la sesión no se guarda en disco.
 - Si `npm install` no descarga el binario de Electron, ejecuta `node node_modules/electron/install.js`.
+- **Parches de dependencias** (`patches/`, aplicados por `patch-package` en `postinstall`):
+  `@milkdown/crepe` hace que la búsqueda del menú "/" ignore acentos y mayúsculas (`/titulo` encuentra
+  "Título 1"). Al actualizar Crepe, regenera el parche (`npx patch-package @milkdown/crepe`) o elimínalo si ya no
+  hace falta. Tras cambiar un parche, borra `node_modules/.vite` para que `npm run dev` no use la versión en caché.
 - ESLint usa `eslint-plugin-react-hooks` 7 (reglas del React Compiler): evita `setState` síncrono dentro de efectos.
