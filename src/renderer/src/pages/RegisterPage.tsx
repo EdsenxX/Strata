@@ -66,31 +66,37 @@ export function RegisterPage() {
 
   return (
     <AuthLayout wide>
-      <Card className="p-8">
-        <div className="mb-6 space-y-1">
+      <Card className="p-7">
+        <div className="mb-5 space-y-1">
           <h1 className="text-2xl font-extrabold">{AUTH_TEXTS.REGISTER_TITLE}</h1>
           <p className="text-sm text-muted">{AUTH_TEXTS.REGISTER_SUBTITLE}</p>
         </div>
-        <form onSubmit={handleSubmit} noValidate className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <TextField
-            className="sm:col-span-2"
-            label={AUTH_TEXTS.FIRST_NAMES_LABEL}
-            autoComplete="given-name"
-            autoFocus
-            maxLength={FIELD_LIMITS.PERSON_NAME_MAX}
-            {...bind(REGISTER_FIELDS.FIRST_NAMES)}
-          />
-          <TextField
-            label={AUTH_TEXTS.PATERNAL_LAST_NAME_LABEL}
-            autoComplete="family-name"
-            maxLength={FIELD_LIMITS.PERSON_NAME_MAX}
-            {...bind(REGISTER_FIELDS.PATERNAL_LAST_NAME)}
-          />
-          <TextField
-            label={AUTH_TEXTS.MATERNAL_LAST_NAME_LABEL}
-            maxLength={FIELD_LIMITS.PERSON_NAME_MAX}
-            {...bind(REGISTER_FIELDS.MATERNAL_LAST_NAME)}
-          />
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2"
+        >
+          {/* Nombre y apellidos en una sola fila para que el formulario quepa sin scroll. */}
+          <div className="grid grid-cols-1 gap-4 sm:col-span-2 sm:grid-cols-3">
+            <TextField
+              label={AUTH_TEXTS.FIRST_NAMES_LABEL}
+              autoComplete="given-name"
+              autoFocus
+              maxLength={FIELD_LIMITS.PERSON_NAME_MAX}
+              {...bind(REGISTER_FIELDS.FIRST_NAMES)}
+            />
+            <TextField
+              label={AUTH_TEXTS.PATERNAL_LAST_NAME_LABEL}
+              autoComplete="family-name"
+              maxLength={FIELD_LIMITS.PERSON_NAME_MAX}
+              {...bind(REGISTER_FIELDS.PATERNAL_LAST_NAME)}
+            />
+            <TextField
+              label={AUTH_TEXTS.MATERNAL_LAST_NAME_LABEL}
+              maxLength={FIELD_LIMITS.PERSON_NAME_MAX}
+              {...bind(REGISTER_FIELDS.MATERNAL_LAST_NAME)}
+            />
+          </div>
           <TextField
             label={AUTH_TEXTS.EMAIL_LABEL}
             type="email"

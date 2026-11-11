@@ -2,7 +2,7 @@
  * Proceso principal de Electron: ventana, configuración, base de datos e IPC.
  */
 import { join } from 'node:path'
-import { app, BrowserWindow, dialog, nativeTheme, shell } from 'electron'
+import { app, BrowserWindow, dialog, nativeTheme, screen, shell } from 'electron'
 import { APP_ID, EXTERNAL_PROTOCOLS, MAIN_PROCESS_TEXTS, MAIN_WINDOW } from '@shared/constants'
 import { ConfigError, loadAppConfig } from './config/env'
 import {
@@ -30,10 +30,40 @@ const getWindowBackgroundColor = (): string =>
     ? MAIN_WINDOW.BACKGROUND_COLOR_DARK
     : MAIN_WINDOW.BACKGROUND_COLOR_LIGHT
 
+interface InitialWindowBounds {
+  x: number
+  y: number
+  width: number
+  height: number
+  /** La pantalla es más chica que el layout: se abre maximizada. */
+  maximize: boolean
+}
+
+/**
+ * Abre la ventana al tamaño del layout, centrada en la pantalla donde está el cursor.
+ * Si el layout no cabe en esa pantalla, se abre maximizada.
+ */
+function getInitialWindowBounds(): InitialWindowBounds {
+  const { workArea } = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
+  const width = Math.min(MAIN_WINDOW.CONTENT_WIDTH, workArea.width)
+  const height = Math.min(MAIN_WINDOW.CONTENT_HEIGHT, workArea.height - MAIN_WINDOW.FRAME_ALLOWANCE)
+  return {
+    x: Math.round(workArea.x + (workArea.width - width) / 2),
+    y: Math.round(workArea.y + (workArea.height - height - MAIN_WINDOW.FRAME_ALLOWANCE) / 2),
+    width,
+    height,
+    maximize:
+      workArea.width < MAIN_WINDOW.CONTENT_WIDTH ||
+      workArea.height < MAIN_WINDOW.CONTENT_HEIGHT + MAIN_WINDOW.FRAME_ALLOWANCE
+  }
+}
+
 function createMainWindow(): BrowserWindow {
+  const { maximize, ...bounds } = getInitialWindowBounds()
   const window = new BrowserWindow({
-    width: MAIN_WINDOW.WIDTH,
-    height: MAIN_WINDOW.HEIGHT,
+    ...bounds,
+    // Las medidas se refieren al área de contenido (sin barra de título): el layout recibe 1440×960.
+    useContentSize: true,
     minWidth: MAIN_WINDOW.MIN_WIDTH,
     minHeight: MAIN_WINDOW.MIN_HEIGHT,
     backgroundColor: getWindowBackgroundColor(),
@@ -47,7 +77,10 @@ function createMainWindow(): BrowserWindow {
     }
   })
 
-  window.once('ready-to-show', () => window.show())
+  window.once('ready-to-show', () => {
+    if (maximize) window.maximize()
+    window.show()
+  })
 
   const syncBackgroundColor = () => window.setBackgroundColor(getWindowBackgroundColor())
   nativeTheme.on('updated', syncBackgroundColor)
