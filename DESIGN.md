@@ -92,7 +92,7 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 | `PasswordChecklist`                                    | Checklist en vivo de `evaluatePassword()`.                                                                                                             |
 | `Modal`                                                | Diálogo con overlay; cierra con Escape o clic fuera.                                                                                                   |
 | `ConfirmDialog`                                        | Confirmación de acciones destructivas con manejo de error.                                                                                             |
-| `StatusBadge`                                          | Insignia de estado de tarea; exporta `TASK_STATUS_COLORS`.                                                                                             |
+| `StatusBadge`                                          | Insignia de un estado del catálogo del usuario (`statusId`). Colores en `statusColors.ts` (`STATUS_COLOR_CLASSES`).                                    |
 | `ProgressBar`                                          | Pista hundida con relleno `success`.                                                                                                                   |
 | `EmptyState`, `LoadingState`, `ErrorBanner`, `Spinner` | Estados vacíos, de carga y de error.                                                                                                                   |
 | `VersionBadge`                                         | Versión de la app (`__APP_VERSION__`).                                                                                                                 |
@@ -100,13 +100,13 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 
 ### Composición
 
-| Carpeta   | Componentes                                                                               |
-| --------- | ----------------------------------------------------------------------------------------- |
-| `layout`  | `AppShell` (barra lateral + contenido), `AuthLayout`, `PageHeader`, `Breadcrumbs`, `Logo` |
-| `forms`   | `NameFormModal` (entornos y fases), `ProjectFormModal`                                    |
-| `tasks`   | `TimerButton`, `ElapsedTime`, `StatusSelector`, `ManualTimeModal`                         |
-| `editor`  | `MarkdownEditor` (Milkdown Crepe adaptado en `styles/editor.css`)                         |
-| `routing` | `ProtectedRoute`, `PublicOnlyRoute`                                                       |
+| Carpeta   | Componentes                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------- |
+| `layout`  | `AppShell` (barra lateral + contenido), `AuthLayout`, `PageHeader`, `Breadcrumbs`, `Logo`             |
+| `forms`   | `NameFormModal` (entornos y fases), `ProjectFormModal`, `StatusFormModal` (nombre, color y categoría) |
+| `tasks`   | `TimerButton`, `ElapsedTime`, `StatusSelector`, `ManualTimeModal`                                     |
+| `editor`  | `MarkdownEditor` (Milkdown Crepe adaptado en `styles/editor.css`)                                     |
+| `routing` | `ProtectedRoute`, `PublicOnlyRoute`                                                                   |
 
 ## Patrones
 
@@ -118,6 +118,9 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
   en `text-danger` (`FieldLabel`). Todo formulario con al menos un campo obligatorio cierra sus campos con
   `RequiredFieldsNote` ("\* Campos obligatorios"). Nunca marques los opcionales con "(opcional)". Los formularios usan
   `noValidate` y muestran el error de campo vacío (`VALIDATION_TEXTS.REQUIRED`) debajo del campo.
+- **Colores de estado**: los estados guardan una clave de `STATUS_COLORS`; se pintan con `STATUS_COLOR_CLASSES`.
+  Los colores semánticos (gris, azul, ámbar, verde, violeta, rojo) usan los tokens del tema; turquesa y rosa usan la
+  paleta 500 de Tailwind, legible en ambos temas.
 - **Acciones destructivas**: siempre con `ConfirmDialog` y variante `danger`.
 - **Guardado automático**: el editor muestra "Guardando…/Guardado" en `text-muted`; error en `text-danger`.
 - **Diseño responsivo**: ventana mínima 960 × 640; el detalle de tarea pasa a una columna en anchos menores a `lg`.

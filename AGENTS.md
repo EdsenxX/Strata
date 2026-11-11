@@ -89,12 +89,26 @@ src/
 - Los secretos solo viven en `.env` (ignorado por git). Nunca los subas ni los copies a código o documentación.
 - Borrados en cascada: entorno → proyectos → fases → tareas, siempre filtrados por `userId`.
 
+### Estados de tarea (configurables)
+
+- Viven en la colección `task_statuses`, **por usuario** (`statusService.ts`); la tarea guarda `statusId`.
+- Cada estado tiene nombre, color (`STATUS_COLORS`), orden y una **categoría** fija (`STATUS_CATEGORIES`:
+  `pending`, `in_progress`, `paused`, `completed`). El código nunca decide por nombre, solo por categoría.
+- El estado por defecto de una categoría es el primero según `order` (tareas nuevas ⇒ `pending`).
+- Cada categoría conserva al menos un estado (`STATUS_LAST_IN_CATEGORY`). Al eliminar un estado, sus tareas
+  pasan al primer estado restante de la misma categoría.
+- `ensureDefaultStatuses()` siembra `DEFAULT_TASK_STATUSES` al iniciar sesión y migra tareas antiguas que tenían
+  `status` como texto (usa el driver nativo porque el esquema ya no conoce ese campo).
+- La interfaz carga el catálogo en `statusStore` (Zustand) desde `AppShell`; `StatusBadge` y `StatusSelector` lo leen.
+- Con `sanitizeFilter` activo, los operadores en filtros (`$ne`, `$in`…) deben envolverse en `mongoose.trusted()`.
+
 ### Cronómetro de tareas
 
 - `timeSpentSeconds`: tiempo acumulado de tramos cerrados.
 - `timerStartedAt`: inicio del tramo en curso (`null` si está detenido).
-- Iniciar ⇒ estado `in_progress`. Pausar ⇒ suma el tramo y estado `paused`.
-- Cambiar a un estado distinto de `in_progress` detiene el cronómetro y acumula.
+- Iniciar ⇒ primer estado de categoría `in_progress` (salvo que ya esté en esa categoría).
+- Pausar ⇒ suma el tramo y pasa al primer estado de categoría `paused`.
+- Cambiar a un estado de otra categoría detiene el cronómetro y acumula.
 - La edición manual del tiempo no se permite con el cronómetro en marcha (`TIMER_RUNNING`).
 - La interfaz calcula el tiempo vivo con `computeElapsedSeconds()`; el valor sobrevive a cierres de la app.
 
@@ -110,18 +124,18 @@ src/
 
 Ninguna cadena o número con significado de negocio va suelto en el código:
 
-| Necesitas…              | Usa                                                                            |
-| ----------------------- | ------------------------------------------------------------------------------ |
-| Texto visible           | `src/shared/constants/texts.ts` (`*_TEXTS`, `ERROR_MESSAGES`, etiquetas)       |
-| Estados de tarea        | `TASK_STATUS`, `TASK_STATUS_VALUES` (`taskStatus.ts`)                          |
-| Canales IPC             | `IPC_CHANNELS` (`ipcChannels.ts`)                                              |
-| Rutas                   | `ROUTES`, `buildRoute`, `QUERY_PARAMS` (`routes.ts`)                           |
-| Límites y regex         | `FIELD_LIMITS`, `PATTERNS`, `PASSWORD_POLICY` (`validation.ts`)                |
-| Colecciones/modelos/env | `MODEL_NAMES`, `COLLECTION_NAMES`, `ENV_KEYS` (`database.ts`)                  |
-| Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                                |
-| Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)                  |
-| Tema y preferencias     | `THEME_MODES`, `THEME_MODE_VALUES`, `PREFERENCES_FILE_NAME` (`preferences.ts`) |
-| Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)          |
+| Necesitas…              | Usa                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| Texto visible           | `src/shared/constants/texts.ts` (`*_TEXTS`, `ERROR_MESSAGES`, etiquetas)        |
+| Estados de tarea        | `STATUS_CATEGORIES`, `STATUS_COLORS`, `DEFAULT_TASK_STATUSES` (`taskStatus.ts`) |
+| Canales IPC             | `IPC_CHANNELS` (`ipcChannels.ts`)                                               |
+| Rutas                   | `ROUTES`, `buildRoute`, `QUERY_PARAMS` (`routes.ts`)                            |
+| Límites y regex         | `FIELD_LIMITS`, `PATTERNS`, `PASSWORD_POLICY` (`validation.ts`)                 |
+| Colecciones/modelos/env | `MODEL_NAMES`, `COLLECTION_NAMES`, `ENV_KEYS` (`database.ts`)                   |
+| Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                                 |
+| Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)                   |
+| Tema y preferencias     | `THEME_MODES`, `THEME_MODE_VALUES`, `PREFERENCES_FILE_NAME` (`preferences.ts`)  |
+| Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)           |
 
 - Importa desde `@shared/constants` (barril `index.ts`).
 - Si un dominio nuevo necesita constantes, crea un archivo nuevo en `src/shared/constants/` y expórtalo en `index.ts`.

@@ -7,6 +7,19 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Agregado
+
+- Estados de tarea configurables por usuario, guardados en MongoDB: pantalla **Estados** para crear, editar
+  (nombre, color y categoría), reordenar y eliminar estados.
+- Categorías de estado (Por hacer, En curso, En pausa, Terminada) que definen el comportamiento del cronómetro y
+  del avance del proyecto.
+
+### Cambiado
+
+- Las tareas guardan `statusId` en lugar de un estado fijo. Las tareas existentes se migran automáticamente al
+  iniciar sesión.
+- Los errores de campo obligatorio desaparecen en cuanto se escribe en el campo.
+
 ## [0.2.0] - 2026-11-11
 
 ### Agregado
