@@ -1,7 +1,7 @@
 {
   "name": "strata",
   "productName": "Strata",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Gestor de tareas de escritorio organizado por entornos, proyectos y fases.",
   "main": "./out/main/index.js",
   "desktopName": "strata.desktop",
