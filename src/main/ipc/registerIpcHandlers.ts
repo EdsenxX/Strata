@@ -16,6 +16,7 @@ import * as environmentService from '../services/environmentService'
 import * as phaseService from '../services/phaseService'
 import * as preferencesService from '../services/preferencesService'
 import * as projectService from '../services/projectService'
+import * as statusService from '../services/statusService'
 import * as taskService from '../services/taskService'
 
 type Handler<T> = (input: unknown) => Promise<T>
@@ -80,6 +81,12 @@ export function registerIpcHandlers(): void {
   handle(IPC_CHANNELS.TASKS_START_TIMER, taskService.startTaskTimer)
   handle(IPC_CHANNELS.TASKS_PAUSE_TIMER, taskService.pauseTaskTimer)
   handle(IPC_CHANNELS.TASKS_SET_TIME, taskService.setTaskTime)
+
+  handle(IPC_CHANNELS.STATUSES_LIST, statusService.listStatuses)
+  handle(IPC_CHANNELS.STATUSES_CREATE, statusService.createStatus)
+  handle(IPC_CHANNELS.STATUSES_UPDATE, statusService.updateStatus)
+  handle(IPC_CHANNELS.STATUSES_DELETE, statusService.deleteStatus)
+  handle(IPC_CHANNELS.STATUSES_REORDER, statusService.reorderStatuses)
 
   const local = { requiresDatabase: false }
   handle(IPC_CHANNELS.PREFERENCES_GET_THEME, preferencesService.getThemeMode, local)

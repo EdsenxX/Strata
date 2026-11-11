@@ -13,11 +13,8 @@ import {
   ROUTES,
   ROUTE_PARAMS,
   TASK_FILTER_ALL,
-  TASK_STATUS_LABELS,
-  TASK_STATUS_VALUES,
   TASK_TEXTS,
-  buildRoute,
-  type TaskStatus
+  buildRoute
 } from '@shared/constants'
 import type { PhaseDto, TaskDto, TaskSummaryDto } from '@shared/types'
 import { api, getErrorMessage, unwrap } from '../api/client'
@@ -36,9 +33,11 @@ import { StatusBadge } from '../components/ui/StatusBadge'
 import { insetFieldClasses } from '../components/ui/TextField'
 import { cn } from '../components/ui/cn'
 import { useAsyncData } from '../hooks/useAsyncData'
+import { useStatusStore } from '../stores/statusStore'
 import { formatDate } from '../utils/format'
 
-type TaskFilter = TaskStatus | typeof TASK_FILTER_ALL
+/** Id de un estado o el filtro especial "todas". */
+type TaskFilter = string
 
 const toSummary = ({ content: _content, ...summary }: TaskDto): TaskSummaryDto => summary
 
@@ -244,6 +243,7 @@ function PhaseTasks({
   const navigate = useNavigate()
   const loadTasks = useCallback(() => unwrap(api.tasks.list(phase.id)), [phase.id])
   const tasks = useAsyncData(loadTasks)
+  const statuses = useStatusStore((state) => state.statuses) ?? []
   const [filter, setFilter] = useState<TaskFilter>(TASK_FILTER_ALL)
   const [newTitle, setNewTitle] = useState('')
   const [creating, setCreating] = useState(false)
@@ -289,8 +289,11 @@ function PhaseTasks({
   }
 
   const visibleTasks =
-    tasks.data?.filter((task) => filter === TASK_FILTER_ALL || task.status === filter) ?? []
-  const filters: TaskFilter[] = [TASK_FILTER_ALL, ...TASK_STATUS_VALUES]
+    tasks.data?.filter((task) => filter === TASK_FILTER_ALL || task.statusId === filter) ?? []
+  const filters = [
+    { id: TASK_FILTER_ALL, label: TASK_TEXTS.FILTER_ALL },
+    ...statuses.map((status) => ({ id: status.id, label: status.name }))
+  ]
 
   return (
     <Card>
@@ -319,18 +322,18 @@ function PhaseTasks({
         <div className="flex flex-wrap gap-2" role="group" aria-label={TASK_TEXTS.STATUS_LABEL}>
           {filters.map((option) => (
             <button
-              key={option}
+              key={option.id}
               type="button"
-              aria-pressed={filter === option}
-              onClick={() => setFilter(option)}
+              aria-pressed={filter === option.id}
+              onClick={() => setFilter(option.id)}
               className={cn(
                 'cursor-pointer rounded-full px-3 py-1.5 text-xs font-semibold transition-all',
-                filter === option
+                filter === option.id
                   ? 'text-accent shadow-neu-inset-sm'
                   : 'text-muted shadow-neu-sm hover:text-ink'
               )}
             >
-              {option === TASK_FILTER_ALL ? TASK_TEXTS.FILTER_ALL : TASK_STATUS_LABELS[option]}
+              {option.label}
             </button>
           ))}
         </div>
@@ -387,7 +390,7 @@ function PhaseTasks({
                   }}
                   className="flex cursor-pointer items-center gap-4 rounded-neu-sm px-4 py-3 shadow-neu-sm transition-shadow hover:shadow-neu"
                 >
-                  <StatusBadge status={task.status} className="w-32 justify-center" />
+                  <StatusBadge statusId={task.statusId} className="w-32 justify-center" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{task.title}</p>
                     <p className="text-xs text-muted">

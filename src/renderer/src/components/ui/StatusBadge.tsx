@@ -1,26 +1,22 @@
-import { TASK_STATUS, TASK_STATUS_LABELS, type TaskStatus } from '@shared/constants'
+import { useStatus } from '../../stores/statusStore'
 import { cn } from './cn'
+import { STATUS_COLOR_CLASSES } from './statusColors'
 
-/** Color asociado a cada estado de tarea (clases de Tailwind). */
-export const TASK_STATUS_COLORS: Record<TaskStatus, { text: string; dot: string }> = {
-  [TASK_STATUS.PENDING]: { text: 'text-muted', dot: 'bg-muted' },
-  [TASK_STATUS.IN_PROGRESS]: { text: 'text-info', dot: 'bg-info' },
-  [TASK_STATUS.PAUSED]: { text: 'text-warning', dot: 'bg-warning' },
-  [TASK_STATUS.COMPLETED]: { text: 'text-success', dot: 'bg-success' }
-}
-
-export function StatusBadge({ status, className }: { status: TaskStatus; className?: string }) {
-  const colors = TASK_STATUS_COLORS[status]
+/** Insignia del estado de una tarea, resuelto desde el catálogo del usuario. */
+export function StatusBadge({ statusId, className }: { statusId: string; className?: string }) {
+  const status = useStatus(statusId)
+  if (!status) return null
+  const colors = STATUS_COLOR_CLASSES[status.color]
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold shadow-neu-inset-sm',
+        'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap shadow-neu-inset-sm',
         colors.text,
         className
       )}
     >
-      <span className={cn('size-2 rounded-full', colors.dot)} />
-      {TASK_STATUS_LABELS[status]}
+      <span className={cn('size-2 shrink-0 rounded-full', colors.dot)} />
+      <span className="truncate">{status.name}</span>
     </span>
   )
 }

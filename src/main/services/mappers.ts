@@ -6,6 +6,7 @@ import type {
   PhaseDto,
   ProjectDto,
   TaskDto,
+  TaskStatusDto,
   TaskSummaryDto,
   UserDto
 } from '@shared/types'
@@ -13,6 +14,7 @@ import type { EnvironmentRecord } from '../database/models/Environment'
 import type { PhaseRecord } from '../database/models/Phase'
 import type { ProjectRecord } from '../database/models/Project'
 import type { TaskRecord } from '../database/models/Task'
+import type { TaskStatusRecord } from '../database/models/TaskStatus'
 import type { UserRecord } from '../database/models/User'
 
 const toIso = (date: Date): string => date.toISOString()
@@ -81,11 +83,24 @@ export function toTaskSummaryDto(task: TaskRecord): TaskSummaryDto {
     projectId: task.projectId.toString(),
     environmentId: task.environmentId.toString(),
     title: task.title,
-    status: task.status,
+    statusId: task.statusId.toString(),
     timeSpentSeconds: task.timeSpentSeconds ?? 0,
     timerStartedAt: task.timerStartedAt ? toIso(task.timerStartedAt) : null,
     createdAt: toIso(task.createdAt),
     updatedAt: toIso(task.updatedAt)
+  }
+}
+
+export function toTaskStatusDto(status: TaskStatusRecord, taskCount: number): TaskStatusDto {
+  return {
+    id: status._id.toString(),
+    name: status.name,
+    color: status.color,
+    category: status.category,
+    order: status.order,
+    taskCount,
+    createdAt: toIso(status.createdAt),
+    updatedAt: toIso(status.updatedAt)
   }
 }
 

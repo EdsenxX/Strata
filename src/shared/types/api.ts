@@ -8,6 +8,7 @@ import type {
   PhaseDto,
   ProjectDto,
   TaskDto,
+  TaskStatusDto,
   TaskSummaryDto,
   UserDto
 } from './entities'
@@ -15,13 +16,16 @@ import type {
   CreateEnvironmentInput,
   CreatePhaseInput,
   CreateProjectInput,
+  CreateStatusInput,
   CreateTaskInput,
   LoginInput,
   RegisterInput,
+  ReorderStatusesInput,
   SetTaskTimeInput,
   UpdateEnvironmentInput,
   UpdatePhaseInput,
   UpdateProjectInput,
+  UpdateStatusInput,
   UpdateTaskInput
 } from './inputs'
 
@@ -67,6 +71,13 @@ export interface StrataApi {
     startTimer: Call<string, TaskDto>
     pauseTimer: Call<string, TaskDto>
     setTime: Call<SetTaskTimeInput, TaskDto>
+  }
+  statuses: {
+    list: CallWithoutInput<TaskStatusDto[]>
+    create: Call<CreateStatusInput, TaskStatusDto>
+    update: Call<UpdateStatusInput, TaskStatusDto>
+    remove: Call<string, null>
+    reorder: Call<ReorderStatusesInput, TaskStatusDto[]>
   }
   preferences: {
     getTheme: CallWithoutInput<ThemeMode>

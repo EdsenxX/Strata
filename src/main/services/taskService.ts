@@ -5,26 +5,27 @@
  * - `timeSpentSeconds` guarda el tiempo acumulado de tramos ya cerrados.
  * - `timerStartedAt` marca el inicio del tramo en curso (null si está detenido).
  * Al pausar se suma el tramo al acumulado. Así el tiempo sobrevive a cierres de la app.
+ *
+ * Los estados son configurables (ver statusService); el cronómetro se apoya en sus categorías.
  */
-import type { HydratedDocument, Types } from 'mongoose'
+import type { Types } from 'mongoose'
 import {
   ERROR_CODES,
   FIELD_LIMITS,
-  TASK_STATUS,
-  TASK_STATUS_VALUES,
-  TIME_UNITS,
-  type TaskStatus
+  STATUS_CATEGORIES,
+  type StatusCategory
 } from '@shared/constants'
 import type { TaskDto, TaskSummaryDto } from '@shared/types'
-import { TaskModel, type TaskRecord } from '../database/models/Task'
+import { TaskModel } from '../database/models/Task'
+import { TaskStatusModel } from '../database/models/TaskStatus'
 import { AppError } from '../errors/AppError'
 import { requireUserId } from '../session/sessionStore'
 import { requireFound, requireObject, requireObjectId, requireText } from '../utils/inputGuards'
 import { toTaskDto, toTaskSummaryDto } from './mappers'
 import { findOwnedPhase } from './phaseService'
 import { touchProject } from './projectService'
-
-type TaskDocument = HydratedDocument<TaskRecord>
+import { findOwnedStatus, getDefaultStatus } from './statusService'
+import { stopRunningTimer, type TaskDocument } from './timer'
 
 async function findOwnedTaskDocument(
   userId: Types.ObjectId,
@@ -33,23 +34,29 @@ async function findOwnedTaskDocument(
   return requireFound(await TaskModel.findOne({ _id: requireObjectId(rawId), userId }))
 }
 
-/** Cierra el tramo del cronómetro en curso y lo suma al acumulado. */
-function stopRunningTimer(task: TaskDocument, now = Date.now()): void {
-  if (!task.timerStartedAt) return
-  const elapsedMs = Math.max(0, now - task.timerStartedAt.getTime())
-  task.timeSpentSeconds =
-    (task.timeSpentSeconds ?? 0) + Math.floor(elapsedMs / TIME_UNITS.MS_PER_SECOND)
-  task.timerStartedAt = null
-}
-
 async function saveTask(userId: Types.ObjectId, task: TaskDocument): Promise<TaskDto> {
   await task.save()
   await touchProject(userId, task.projectId)
   return toTaskDto(task.toObject())
 }
 
-function isTaskStatus(value: unknown): value is TaskStatus {
-  return TASK_STATUS_VALUES.includes(value as TaskStatus)
+/** Categoría del estado actual de la tarea (null si el estado ya no existe). */
+async function getCurrentCategory(
+  userId: Types.ObjectId,
+  task: TaskDocument
+): Promise<StatusCategory | null> {
+  const status = await TaskStatusModel.findOne({ _id: task.statusId, userId }).lean()
+  return status?.category ?? null
+}
+
+/** Mueve la tarea al estado por defecto de la categoría, salvo que ya esté en esa categoría. */
+async function moveToCategory(
+  userId: Types.ObjectId,
+  task: TaskDocument,
+  category: StatusCategory
+): Promise<void> {
+  if ((await getCurrentCategory(userId, task)) === category) return
+  task.statusId = (await getDefaultStatus(userId, category))._id
 }
 
 /** Lista las tareas de una fase, de la más reciente a la más antigua (sin contenido). */
@@ -77,13 +84,14 @@ export async function createTask(raw: unknown): Promise<TaskDto> {
     environmentId: phase.environmentId,
     projectId: phase.projectId,
     phaseId: phase._id,
+    statusId: (await getDefaultStatus(userId, STATUS_CATEGORIES.PENDING))._id,
     title: requireText(data.title, FIELD_LIMITS.TASK_TITLE_MAX)
   })
   await touchProject(userId, phase.projectId)
   return toTaskDto(task.toObject())
 }
 
-/** Actualiza título, contenido y/o estado. Salir de "en progreso" detiene el cronómetro. */
+/** Actualiza título, contenido y/o estado. Un estado fuera de la categoría "en curso" detiene el cronómetro. */
 export async function updateTask(raw: unknown): Promise<TaskDto> {
   const userId = requireUserId()
   const data = requireObject(raw)
@@ -98,10 +106,10 @@ export async function updateTask(raw: unknown): Promise<TaskDto> {
     task.content = data.content
   }
 
-  if (data.status !== undefined) {
-    if (!isTaskStatus(data.status)) throw new AppError(ERROR_CODES.VALIDATION_FAILED)
-    if (data.status !== TASK_STATUS.IN_PROGRESS) stopRunningTimer(task)
-    task.status = data.status
+  if (data.statusId !== undefined) {
+    const status = await findOwnedStatus(userId, requireObjectId(data.statusId))
+    if (status.category !== STATUS_CATEGORIES.IN_PROGRESS) stopRunningTimer(task)
+    task.statusId = status._id
   }
 
   return saveTask(userId, task)
@@ -115,21 +123,21 @@ export async function deleteTask(rawId: unknown): Promise<null> {
   return null
 }
 
-/** Inicia el cronómetro y pasa la tarea a "en progreso". */
+/** Inicia el cronómetro y pasa la tarea a un estado de categoría "en curso". */
 export async function startTaskTimer(rawId: unknown): Promise<TaskDto> {
   const userId = requireUserId()
   const task = await findOwnedTaskDocument(userId, rawId)
   if (!task.timerStartedAt) task.timerStartedAt = new Date()
-  task.status = TASK_STATUS.IN_PROGRESS
+  await moveToCategory(userId, task, STATUS_CATEGORIES.IN_PROGRESS)
   return saveTask(userId, task)
 }
 
-/** Pausa el cronómetro, acumula el tiempo y pasa la tarea a "en pausa". */
+/** Pausa el cronómetro, acumula el tiempo y pasa la tarea a un estado de categoría "en pausa". */
 export async function pauseTaskTimer(rawId: unknown): Promise<TaskDto> {
   const userId = requireUserId()
   const task = await findOwnedTaskDocument(userId, rawId)
   stopRunningTimer(task)
-  task.status = TASK_STATUS.PAUSED
+  await moveToCategory(userId, task, STATUS_CATEGORIES.PAUSED)
   return saveTask(userId, task)
 }
 

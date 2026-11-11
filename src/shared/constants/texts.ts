@@ -6,7 +6,12 @@ import { APP_NAME } from './app'
 import { ENV_FILE_NAME, ENV_KEYS } from './database'
 import { ERROR_CODES, type ErrorCode } from './errorCodes'
 import { THEME_MODES } from './preferences'
-import { TASK_STATUS, type TaskStatus } from './taskStatus'
+import {
+  STATUS_CATEGORIES,
+  STATUS_COLORS,
+  type StatusCategory,
+  type StatusColor
+} from './taskStatus'
 import { FIELD_LIMITS, PASSWORD_POLICY, PASSWORD_RULE_IDS, type PasswordRuleId } from './validation'
 
 export const COMMON_TEXTS = {
@@ -80,6 +85,8 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ERROR_CODES.VALIDATION_FAILED]: 'Revisa los datos ingresados.',
   [ERROR_CODES.NOT_FOUND]: 'No encontramos lo que buscas. Puede que haya sido eliminado.',
   [ERROR_CODES.TIMER_RUNNING]: 'Pausa el cronómetro antes de editar el tiempo.',
+  [ERROR_CODES.STATUS_LAST_IN_CATEGORY]:
+    'Cada categoría necesita al menos un estado. Crea otro en esa categoría antes de quitar este.',
   [ERROR_CODES.DATABASE_UNAVAILABLE]:
     'No hay conexión con la base de datos. Revisa tu internet y la configuración.',
   [ERROR_CODES.UNKNOWN]: 'Ocurrió un error inesperado. Inténtalo de nuevo.'
@@ -106,6 +113,7 @@ export const THEME_TEXTS = {
 
 export const NAV_TEXTS = {
   ENVIRONMENTS: 'Entornos',
+  STATUSES: 'Estados',
   BREADCRUMB_LABEL: 'Ruta de navegación'
 } as const
 
@@ -195,11 +203,54 @@ export const TASK_TEXTS = {
   UPDATED_AT: 'Editada'
 } as const
 
-export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
-  [TASK_STATUS.PENDING]: 'Pendiente',
-  [TASK_STATUS.IN_PROGRESS]: 'En progreso',
-  [TASK_STATUS.PAUSED]: 'En pausa',
-  [TASK_STATUS.COMPLETED]: 'Completada'
+export const STATUS_TEXTS = {
+  PAGE_TITLE: 'Estados de tareas',
+  PAGE_SUBTITLE:
+    'Define los estados que usan tus tareas. La categoría decide cómo se comporta cada estado.',
+  NEW: 'Nuevo estado',
+  CREATE_TITLE: 'Nuevo estado',
+  EDIT_TITLE: 'Editar estado',
+  NAME_LABEL: 'Nombre',
+  NAME_PLACEHOLDER: 'Ej. En revisión, Bloqueada…',
+  COLOR_LABEL: 'Color',
+  CATEGORY_LABEL: 'Categoría',
+  COLUMN_STATUS: 'Estado',
+  COLUMN_CATEGORY: 'Categoría',
+  COLUMN_TASKS: 'Tareas',
+  MOVE_UP: 'Subir',
+  MOVE_DOWN: 'Bajar',
+  DELETE_TITLE: 'Eliminar estado',
+  DELETE_BODY: (name: string, taskCount: number, replacement: string): string =>
+    taskCount === 0
+      ? `Se eliminará el estado "${name}". Esta acción no se puede deshacer.`
+      : `Se eliminará el estado "${name}" y sus ${taskCount} ${taskCount === 1 ? 'tarea pasará' : 'tareas pasarán'} a "${replacement}". Esta acción no se puede deshacer.`,
+  LAST_IN_CATEGORY_HINT: 'Es el único estado de su categoría; no se puede eliminar.',
+  TASK_COUNT: (count: number): string => (count === 1 ? '1 tarea' : `${count} tareas`)
+} as const
+
+export const STATUS_CATEGORY_LABELS: Record<StatusCategory, string> = {
+  [STATUS_CATEGORIES.PENDING]: 'Por hacer',
+  [STATUS_CATEGORIES.IN_PROGRESS]: 'En curso',
+  [STATUS_CATEGORIES.PAUSED]: 'En pausa',
+  [STATUS_CATEGORIES.COMPLETED]: 'Terminada'
+}
+
+export const STATUS_CATEGORY_HINTS: Record<StatusCategory, string> = {
+  [STATUS_CATEGORIES.PENDING]: 'Las tareas nuevas empiezan en el primer estado de esta categoría.',
+  [STATUS_CATEGORIES.IN_PROGRESS]: 'Iniciar el cronómetro mueve la tarea aquí.',
+  [STATUS_CATEGORIES.PAUSED]: 'Pausar el cronómetro mueve la tarea aquí.',
+  [STATUS_CATEGORIES.COMPLETED]: 'Cuenta como terminada en el avance del proyecto.'
+}
+
+export const STATUS_COLOR_LABELS: Record<StatusColor, string> = {
+  [STATUS_COLORS.GRAY]: 'Gris',
+  [STATUS_COLORS.BLUE]: 'Azul',
+  [STATUS_COLORS.AMBER]: 'Ámbar',
+  [STATUS_COLORS.GREEN]: 'Verde',
+  [STATUS_COLORS.VIOLET]: 'Violeta',
+  [STATUS_COLORS.TEAL]: 'Turquesa',
+  [STATUS_COLORS.PINK]: 'Rosa',
+  [STATUS_COLORS.RED]: 'Rojo'
 }
 
 /** Etiquetas del editor de bloques (menú "/" y bloques de código). */

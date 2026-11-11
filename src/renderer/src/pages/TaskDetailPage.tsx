@@ -12,8 +12,7 @@ import {
   SAVE_STATUS,
   TASK_TEXTS,
   buildRoute,
-  type SaveStatus,
-  type TaskStatus
+  type SaveStatus
 } from '@shared/constants'
 import type { TaskDto } from '@shared/types'
 import { api, getErrorMessage, unwrap } from '../api/client'
@@ -110,8 +109,8 @@ export function TaskDetailPage() {
     setTitle(null)
   }
 
-  const changeStatus = (status: TaskStatus) =>
-    runAction(() => unwrap(api.tasks.update({ id: task.id, status })))
+  const changeStatus = (statusId: string) =>
+    runAction(() => unwrap(api.tasks.update({ id: task.id, statusId })))
 
   const toggleTimer = () =>
     runAction(() => unwrap(running ? api.tasks.pauseTimer(task.id) : api.tasks.startTimer(task.id)))
@@ -188,9 +187,9 @@ export function TaskDetailPage() {
               {TASK_TEXTS.STATUS_LABEL}
             </h2>
             <StatusSelector
-              value={task.status}
+              value={task.statusId}
               disabled={busy}
-              onChange={(status) => void changeStatus(status)}
+              onChange={(statusId) => void changeStatus(statusId)}
             />
           </Card>
 

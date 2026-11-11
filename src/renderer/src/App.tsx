@@ -8,6 +8,7 @@ import { EnvironmentsPage } from './pages/EnvironmentsPage'
 import { LoginPage } from './pages/LoginPage'
 import { ProjectDetailPage } from './pages/ProjectDetailPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { StatusesPage } from './pages/StatusesPage'
 import { TaskDetailPage } from './pages/TaskDetailPage'
 import { useAuthStore } from './stores/authStore'
 import { useThemeStore } from './stores/themeStore'
@@ -38,6 +39,7 @@ export function App() {
             <Route path={ROUTES.ENVIRONMENT} element={<EnvironmentDetailPage />} />
             <Route path={ROUTES.PROJECT} element={<ProjectDetailPage />} />
             <Route path={ROUTES.TASK} element={<TaskDetailPage />} />
+            <Route path={ROUTES.STATUSES} element={<StatusesPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to={ROUTES.ENVIRONMENTS} replace />} />

@@ -48,6 +48,13 @@ const api: StrataApi = {
     pauseTimer: invoke(IPC_CHANNELS.TASKS_PAUSE_TIMER),
     setTime: invoke(IPC_CHANNELS.TASKS_SET_TIME)
   },
+  statuses: {
+    list: invoke(IPC_CHANNELS.STATUSES_LIST),
+    create: invoke(IPC_CHANNELS.STATUSES_CREATE),
+    update: invoke(IPC_CHANNELS.STATUSES_UPDATE),
+    remove: invoke(IPC_CHANNELS.STATUSES_DELETE),
+    reorder: invoke(IPC_CHANNELS.STATUSES_REORDER)
+  },
   preferences: {
     getTheme: invoke(IPC_CHANNELS.PREFERENCES_GET_THEME),
     setTheme: invoke(IPC_CHANNELS.PREFERENCES_SET_THEME)

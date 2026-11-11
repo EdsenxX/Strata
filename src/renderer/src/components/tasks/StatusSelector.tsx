@@ -1,42 +1,40 @@
-import {
-  TASK_STATUS_LABELS,
-  TASK_STATUS_VALUES,
-  TASK_TEXTS,
-  type TaskStatus
-} from '@shared/constants'
-import { TASK_STATUS_COLORS } from '../ui/StatusBadge'
+import { TASK_TEXTS } from '@shared/constants'
+import { useStatusStore } from '../../stores/statusStore'
 import { cn } from '../ui/cn'
+import { STATUS_COLOR_CLASSES } from '../ui/statusColors'
 
 interface StatusSelectorProps {
-  value: TaskStatus
+  value: string
   disabled?: boolean
-  onChange: (status: TaskStatus) => void
+  onChange: (statusId: string) => void
 }
 
-/** Selector de estado como grupo de botones neumórficos (el activo queda hundido). */
+/** Selector de estado con los estados del usuario (el activo queda hundido). */
 export function StatusSelector({ value, disabled, onChange }: StatusSelectorProps) {
+  const statuses = useStatusStore((state) => state.statuses) ?? []
   return (
     <div role="radiogroup" aria-label={TASK_TEXTS.STATUS_LABEL} className="grid grid-cols-2 gap-3">
-      {TASK_STATUS_VALUES.map((status) => {
-        const active = status === value
-        const colors = TASK_STATUS_COLORS[status]
+      {statuses.map((status) => {
+        const active = status.id === value
+        const colors = STATUS_COLOR_CLASSES[status.color]
         return (
           <button
-            key={status}
+            key={status.id}
             type="button"
             role="radio"
             aria-checked={active}
             disabled={disabled}
-            onClick={() => !active && onChange(status)}
+            title={status.name}
+            onClick={() => !active && onChange(status.id)}
             className={cn(
-              'flex cursor-pointer items-center gap-2 rounded-neu-sm px-3 py-2.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60',
+              'flex min-w-0 cursor-pointer items-center gap-2 rounded-neu-sm px-3 py-2.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60',
               active
                 ? cn('shadow-neu-inset', colors.text)
                 : 'text-muted shadow-neu-sm hover:text-ink'
             )}
           >
-            <span className={cn('size-2 rounded-full', colors.dot)} />
-            {TASK_STATUS_LABELS[status]}
+            <span className={cn('size-2 shrink-0 rounded-full', colors.dot)} />
+            <span className="truncate">{status.name}</span>
           </button>
         )
       })}

@@ -34,6 +34,12 @@ export const IPC_CHANNELS = {
   TASKS_PAUSE_TIMER: 'tasks:pause-timer',
   TASKS_SET_TIME: 'tasks:set-time',
 
+  STATUSES_LIST: 'statuses:list',
+  STATUSES_CREATE: 'statuses:create',
+  STATUSES_UPDATE: 'statuses:update',
+  STATUSES_DELETE: 'statuses:delete',
+  STATUSES_REORDER: 'statuses:reorder',
+
   PREFERENCES_GET_THEME: 'preferences:get-theme',
   PREFERENCES_SET_THEME: 'preferences:set-theme'
 } as const

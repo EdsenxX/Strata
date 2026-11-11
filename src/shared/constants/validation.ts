@@ -29,6 +29,7 @@ export const FIELD_LIMITS = {
   ENTITY_NAME_MAX: 80,
   DESCRIPTION_MAX: 500,
   TASK_TITLE_MAX: 160,
+  STATUS_NAME_MAX: 40,
   TASK_CONTENT_MAX: 200_000,
   /** Tiempo máximo registrable manualmente en una tarea: 9 999 horas. */
   TASK_TIME_MAX_SECONDS: 9_999 * 3_600

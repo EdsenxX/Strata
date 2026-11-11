@@ -1,7 +1,7 @@
 /**
  * Datos de entrada que la interfaz envía al proceso principal.
  */
-import type { TaskStatus } from '../constants/taskStatus'
+import type { StatusCategory, StatusColor } from '../constants/taskStatus'
 
 export interface RegisterInput {
   firstNames: string
@@ -59,10 +59,25 @@ export interface UpdateTaskInput {
   id: string
   title?: string
   content?: string
-  status?: TaskStatus
+  statusId?: string
 }
 
 export interface SetTaskTimeInput {
   id: string
   timeSpentSeconds: number
+}
+
+export interface CreateStatusInput {
+  name: string
+  color: StatusColor
+  category: StatusCategory
+}
+
+export interface UpdateStatusInput extends CreateStatusInput {
+  id: string
+}
+
+/** Ids de todos los estados del usuario en el nuevo orden. */
+export interface ReorderStatusesInput {
+  ids: string[]
 }

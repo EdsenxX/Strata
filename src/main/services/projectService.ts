@@ -2,7 +2,7 @@
  * Proyectos: viven dentro de un entorno y se dividen en fases.
  */
 import type { Types } from 'mongoose'
-import { FIELD_LIMITS, TASK_STATUS } from '@shared/constants'
+import { FIELD_LIMITS, STATUS_CATEGORIES } from '@shared/constants'
 import type { ProjectDto } from '@shared/types'
 import { PhaseModel } from '../database/models/Phase'
 import { ProjectModel } from '../database/models/Project'
@@ -17,6 +17,7 @@ import {
 } from '../utils/inputGuards'
 import { findOwnedEnvironment } from './environmentService'
 import { toProjectDto, type TaskCounts } from './mappers'
+import { getStatusIdsByCategory } from './statusService'
 
 const EMPTY_COUNTS: TaskCounts = { taskCount: 0, completedTaskCount: 0 }
 
@@ -29,6 +30,7 @@ async function countTasksByProject(
   userId: Types.ObjectId,
   projectIds: Types.ObjectId[]
 ): Promise<Map<string, TaskCounts>> {
+  const completedStatusIds = await getStatusIdsByCategory(userId, STATUS_CATEGORIES.COMPLETED)
   const rows = await TaskModel.aggregate<{ _id: Types.ObjectId } & TaskCounts>([
     { $match: { userId, projectId: { $in: projectIds } } },
     {
@@ -36,7 +38,7 @@ async function countTasksByProject(
         _id: '$projectId',
         taskCount: { $sum: 1 },
         completedTaskCount: {
-          $sum: { $cond: [{ $eq: ['$status', TASK_STATUS.COMPLETED] }, 1, 0] }
+          $sum: { $cond: [{ $in: ['$statusId', completedStatusIds] }, 1, 0] }
         }
       }
     }

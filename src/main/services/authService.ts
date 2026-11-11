@@ -16,6 +16,7 @@ import { UserModel } from '../database/models/User'
 import { AppError } from '../errors/AppError'
 import { endSession, restoreSession, startSession } from '../session/sessionStore'
 import { requireObject } from '../utils/inputGuards'
+import { ensureDefaultStatuses } from './statusService'
 import { toUserDto } from './mappers'
 
 function readRegisterInput(raw: unknown): RegisterInput {
@@ -53,6 +54,7 @@ export async function register(raw: unknown): Promise<UserDto> {
       passwordHash: await bcrypt.hash(input.password, BCRYPT_SALT_ROUNDS)
     })
     await startSession(user._id.toString())
+    await ensureDefaultStatuses(user._id)
     return toUserDto(user.toObject())
   } catch (error) {
     // Carrera entre la verificación y la inserción: el índice único decide.
@@ -83,6 +85,7 @@ export async function login(raw: unknown): Promise<UserDto> {
   if (!user || !passwordMatches) throw new AppError(ERROR_CODES.INVALID_CREDENTIALS)
 
   await startSession(user._id.toString())
+  await ensureDefaultStatuses(user._id)
   return toUserDto(user)
 }
 
@@ -99,5 +102,6 @@ export async function getSession(): Promise<UserDto | null> {
     await endSession()
     return null
   }
+  await ensureDefaultStatuses(user._id)
   return toUserDto(user)
 }
