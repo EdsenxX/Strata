@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-11
+
 ### Agregado
 
 - Estados de tarea configurables por usuario, guardados en MongoDB: pantalla **Estados** para crear, editar
