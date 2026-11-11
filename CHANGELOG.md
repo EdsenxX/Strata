@@ -7,6 +7,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Cambiado
+
+- La ventana abre al tamaño del layout (1440 × 960 de contenido), centrada en la pantalla del cursor, y maximizada si
+  la pantalla es más chica. La ventana completa ya no hace scroll.
+- Registro más compacto: nombre y apellidos en una sola fila.
+
 ## [0.3.0] - 2026-11-11
 
 ### Agregado

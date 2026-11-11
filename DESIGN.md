@@ -123,7 +123,11 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
   paleta 500 de Tailwind, legible en ambos temas.
 - **Acciones destructivas**: siempre con `ConfirmDialog` y variante `danger`.
 - **Guardado automático**: el editor muestra "Guardando…/Guardado" en `text-muted`; error en `text-danger`.
-- **Diseño responsivo**: ventana mínima 960 × 640; el detalle de tarea pasa a una columna en anchos menores a `lg`.
+- **Tamaño de ventana y scroll**: la ventana abre con un área de contenido de 1440 × 960 (`MAIN_WINDOW`), el alto
+  que necesitan las pantallas más altas (registro y detalle de tarea) para verse sin scroll; si la pantalla es más
+  chica, abre maximizada. `html` y `body` nunca hacen scroll: la zona desplazable es el `main` de `AppShell` o el
+  contenedor de `AuthLayout`. Si una pantalla nueva necesita más de 960 px de alto, compáctala o ajusta `MAIN_WINDOW`.
+- **Diseño responsivo**: ventana mínima 1024 × 640; el detalle de tarea pasa a una columna en anchos menores a `lg`.
 
 ## Accesibilidad
 
