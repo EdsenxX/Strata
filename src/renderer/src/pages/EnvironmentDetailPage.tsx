@@ -26,6 +26,7 @@ import { ErrorBanner } from '../components/ui/ErrorBanner'
 import { PageHeaderSkeleton } from '../components/skeletons/PageHeaderSkeleton'
 import { ProjectsTableSkeleton } from '../components/skeletons/ProjectsTableSkeleton'
 import { ProgressBar } from '../components/ui/ProgressBar'
+import { ElapsedTime } from '../components/tasks/ElapsedTime'
 import { useAsyncData } from '../hooks/useAsyncData'
 import { formatDate } from '../utils/format'
 
@@ -139,6 +140,7 @@ export function EnvironmentDetailPage() {
                   <th className="px-4 py-2">{PROJECT_TEXTS.COLUMN_NAME}</th>
                   <th className="px-4 py-2">{PROJECT_TEXTS.COLUMN_DESCRIPTION}</th>
                   <th className="px-4 py-2">{PROJECT_TEXTS.COLUMN_PROGRESS}</th>
+                  <th className="px-4 py-2">{PROJECT_TEXTS.COLUMN_TIME}</th>
                   <th
                     className="px-4 py-2"
                     aria-sort={sortDirection === SORT_DIRECTIONS.ASC ? 'ascending' : 'descending'}
@@ -192,6 +194,13 @@ export function EnvironmentDetailPage() {
                           project.completedTaskCount,
                           project.taskCount
                         )}
+                      />
+                    </td>
+                    <td className={CELL_CLASSES}>
+                      <ElapsedTime
+                        className="text-sm text-muted"
+                        timeSpentSeconds={project.timeSpentSeconds}
+                        runningTimerStartedAts={project.runningTimerStartedAts}
                       />
                     </td>
                     <td className={cn(CELL_CLASSES, 'whitespace-nowrap text-muted')}>

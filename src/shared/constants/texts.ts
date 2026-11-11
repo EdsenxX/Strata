@@ -153,6 +153,8 @@ export const PROJECT_TEXTS = {
   COLUMN_NAME: 'Proyecto',
   COLUMN_DESCRIPTION: 'Descripción',
   COLUMN_PROGRESS: 'Avance',
+  COLUMN_TIME: 'Tiempo',
+  TOTAL_TIME: 'Tiempo total',
   COLUMN_CREATED_AT: 'Creado',
   COLUMN_UPDATED_AT: 'Editado',
   SORT_BY_CREATED_AT: 'Ordenar por fecha de creación',
@@ -161,6 +163,7 @@ export const PROJECT_TEXTS = {
 
 export const PHASE_TEXTS = {
   SECTION_TITLE: 'Fases',
+  TOTAL_TIME: 'Tiempo de la fase',
   NEW: 'Nueva fase',
   NAME_LABEL: 'Nombre de la fase',
   NAME_PLACEHOLDER: 'Ej. Descubrimiento, Desarrollo, Lanzamiento…',

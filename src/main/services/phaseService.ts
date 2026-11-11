@@ -8,8 +8,32 @@ import { PhaseModel } from '../database/models/Phase'
 import { TaskModel } from '../database/models/Task'
 import { requireUserId } from '../session/sessionStore'
 import { requireFound, requireObject, requireObjectId, requireText } from '../utils/inputGuards'
-import { toPhaseDto } from './mappers'
+import { toPhaseDto, type PhaseStats } from './mappers'
 import { findOwnedProject, touchProject } from './projectService'
+import {
+  EMPTY_TIME_TOTALS,
+  TIME_TOTALS_ACCUMULATORS,
+  toTimeTotals,
+  type TimeTotalsRow
+} from './timeTotals'
+
+const EMPTY_STATS: PhaseStats = { taskCount: 0, ...EMPTY_TIME_TOTALS }
+
+/** Cuenta tareas y suma su tiempo, agrupadas por fase. */
+async function getStatsByPhase(
+  userId: Types.ObjectId,
+  match: Record<string, Types.ObjectId>
+): Promise<Map<string, PhaseStats>> {
+  const rows = await TaskModel.aggregate<
+    { _id: Types.ObjectId; taskCount: number } & TimeTotalsRow
+  >([
+    { $match: { userId, ...match } },
+    { $group: { _id: '$phaseId', taskCount: { $sum: 1 }, ...TIME_TOTALS_ACCUMULATORS } }
+  ])
+  return new Map(
+    rows.map((row) => [row._id.toString(), { taskCount: row.taskCount, ...toTimeTotals(row) }])
+  )
+}
 
 export async function findOwnedPhase(userId: Types.ObjectId, phaseId: Types.ObjectId) {
   return requireFound(await PhaseModel.findOne({ _id: phaseId, userId }).lean())
@@ -18,15 +42,11 @@ export async function findOwnedPhase(userId: Types.ObjectId, phaseId: Types.Obje
 export async function listPhases(rawProjectId: unknown): Promise<PhaseDto[]> {
   const userId = requireUserId()
   const project = await findOwnedProject(userId, requireObjectId(rawProjectId))
-  const [phases, counts] = await Promise.all([
+  const [phases, stats] = await Promise.all([
     PhaseModel.find({ userId, projectId: project._id }).sort({ order: 1, createdAt: 1 }).lean(),
-    TaskModel.aggregate<{ _id: Types.ObjectId; count: number }>([
-      { $match: { userId, projectId: project._id } },
-      { $group: { _id: '$phaseId', count: { $sum: 1 } } }
-    ])
+    getStatsByPhase(userId, { projectId: project._id })
   ])
-  const countByPhase = new Map(counts.map((item) => [item._id.toString(), item.count]))
-  return phases.map((phase) => toPhaseDto(phase, countByPhase.get(phase._id.toString()) ?? 0))
+  return phases.map((phase) => toPhaseDto(phase, stats.get(phase._id.toString()) ?? EMPTY_STATS))
 }
 
 export async function createPhase(raw: unknown): Promise<PhaseDto> {
@@ -44,7 +64,7 @@ export async function createPhase(raw: unknown): Promise<PhaseDto> {
     order: lastPhase ? lastPhase.order + 1 : 0
   })
   await touchProject(userId, project._id)
-  return toPhaseDto(phase.toObject(), 0)
+  return toPhaseDto(phase.toObject(), EMPTY_STATS)
 }
 
 export async function updatePhase(raw: unknown): Promise<PhaseDto> {
@@ -58,7 +78,8 @@ export async function updatePhase(raw: unknown): Promise<PhaseDto> {
     ).lean()
   )
   await touchProject(userId, phase.projectId)
-  return toPhaseDto(phase, await TaskModel.countDocuments({ userId, phaseId: phase._id }))
+  const stats = await getStatsByPhase(userId, { phaseId: phase._id })
+  return toPhaseDto(phase, stats.get(phase._id.toString()) ?? EMPTY_STATS)
 }
 
 /** Elimina la fase y sus tareas. */

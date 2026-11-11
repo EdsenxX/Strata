@@ -14,6 +14,14 @@ export interface UserDto {
   createdAt: string
 }
 
+/** Tiempo acumulado de un grupo de tareas (fase o proyecto). */
+export interface TimeTotals {
+  /** Suma de los tramos ya cerrados de todas sus tareas. */
+  timeSpentSeconds: number
+  /** Inicio (ISO) de cada cronómetro en marcha, para sumar su tramo en vivo. */
+  runningTimerStartedAts: string[]
+}
+
 export interface EnvironmentDto {
   id: string
   userId: string
@@ -23,7 +31,7 @@ export interface EnvironmentDto {
   updatedAt: string
 }
 
-export interface ProjectDto {
+export interface ProjectDto extends TimeTotals {
   id: string
   environmentId: string
   name: string
@@ -34,7 +42,7 @@ export interface ProjectDto {
   updatedAt: string
 }
 
-export interface PhaseDto {
+export interface PhaseDto extends TimeTotals {
   id: string
   projectId: string
   environmentId: string

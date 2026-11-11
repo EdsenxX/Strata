@@ -17,21 +17,29 @@ import {
 } from '../utils/inputGuards'
 import { findOwnedEnvironment } from './environmentService'
 import { toProjectDto, type TaskCounts } from './mappers'
+import {
+  EMPTY_TIME_TOTALS,
+  TIME_TOTALS_ACCUMULATORS,
+  toTimeTotals,
+  type TimeTotalsRow
+} from './timeTotals'
 import { getStatusIdsByCategory } from './statusService'
 
-const EMPTY_COUNTS: TaskCounts = { taskCount: 0, completedTaskCount: 0 }
+const EMPTY_COUNTS: TaskCounts = { taskCount: 0, completedTaskCount: 0, ...EMPTY_TIME_TOTALS }
 
 export async function findOwnedProject(userId: Types.ObjectId, projectId: Types.ObjectId) {
   return requireFound(await ProjectModel.findOne({ _id: projectId, userId }).lean())
 }
 
-/** Cuenta tareas totales y completadas agrupadas por proyecto. */
+/** Cuenta tareas (totales y completadas) y suma su tiempo, agrupadas por proyecto. */
 async function countTasksByProject(
   userId: Types.ObjectId,
   projectIds: Types.ObjectId[]
 ): Promise<Map<string, TaskCounts>> {
   const completedStatusIds = await getStatusIdsByCategory(userId, STATUS_CATEGORIES.COMPLETED)
-  const rows = await TaskModel.aggregate<{ _id: Types.ObjectId } & TaskCounts>([
+  const rows = await TaskModel.aggregate<
+    { _id: Types.ObjectId; taskCount: number; completedTaskCount: number } & TimeTotalsRow
+  >([
     { $match: { userId, projectId: { $in: projectIds } } },
     {
       $group: {
@@ -39,11 +47,21 @@ async function countTasksByProject(
         taskCount: { $sum: 1 },
         completedTaskCount: {
           $sum: { $cond: [{ $in: ['$statusId', completedStatusIds] }, 1, 0] }
-        }
+        },
+        ...TIME_TOTALS_ACCUMULATORS
       }
     }
   ])
-  return new Map(rows.map(({ _id, ...counts }) => [_id.toString(), counts]))
+  return new Map(
+    rows.map((row) => [
+      row._id.toString(),
+      {
+        taskCount: row.taskCount,
+        completedTaskCount: row.completedTaskCount,
+        ...toTimeTotals(row)
+      }
+    ])
+  )
 }
 
 async function toDtoWithCounts(

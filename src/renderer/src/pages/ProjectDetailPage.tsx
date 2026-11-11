@@ -16,12 +16,13 @@ import {
   TASK_TEXTS,
   buildRoute
 } from '@shared/constants'
-import type { PhaseDto, TaskDto, TaskSummaryDto } from '@shared/types'
+import type { PhaseDto, TaskDto, TaskSummaryDto, TimeTotals } from '@shared/types'
 import { api, getErrorMessage, unwrap } from '../api/client'
 import { NameFormModal } from '../components/forms/NameFormModal'
 import { ProjectFormModal, type ProjectFormValues } from '../components/forms/ProjectFormModal'
 import { PageHeader } from '../components/layout/PageHeader'
-import { ElapsedTime } from '../components/tasks/ElapsedTime'
+import { ElapsedTime, runningTimersOf } from '../components/tasks/ElapsedTime'
+import { TimeTotalBadge } from '../components/tasks/TimeTotalBadge'
 import { TimerButton } from '../components/tasks/TimerButton'
 import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
@@ -101,13 +102,6 @@ export function ProjectDetailPage() {
     setSearchParams({}, { replace: true })
   }
 
-  const changeTaskCount = (phaseId: string, delta: number) =>
-    updatePhases((current) =>
-      current.map((phase) =>
-        phase.id === phaseId ? { ...phase, taskCount: phase.taskCount + delta } : phase
-      )
-    )
-
   return (
     <>
       <PageHeader
@@ -119,9 +113,12 @@ export function ProjectDetailPage() {
           { label: project.name }
         ]}
         actions={
-          <Button icon={<Pencil className="size-4" />} onClick={() => setEditingProject(true)}>
-            {PROJECT_TEXTS.EDIT_TITLE}
-          </Button>
+          <div className="flex items-center gap-4">
+            <TimeTotalBadge totals={project} label={PROJECT_TEXTS.TOTAL_TIME} />
+            <Button icon={<Pencil className="size-4" />} onClick={() => setEditingProject(true)}>
+              {PROJECT_TEXTS.EDIT_TITLE}
+            </Button>
+          </div>
         }
       />
 
@@ -146,6 +143,11 @@ export function ProjectDetailPage() {
                 )}
               >
                 {phase.name}
+                <ElapsedTime
+                  className="text-[11px] font-medium text-muted"
+                  timeSpentSeconds={phase.timeSpentSeconds}
+                  runningTimerStartedAts={phase.runningTimerStartedAts}
+                />
                 <span className="rounded-full px-2 py-0.5 font-mono text-[11px] shadow-neu-inset-sm">
                   {phase.taskCount}
                 </span>
@@ -169,7 +171,7 @@ export function ProjectDetailPage() {
           environmentId={environmentId}
           onRename={() => setRenamingPhase(activePhase)}
           onDelete={() => setDeletingPhase(activePhase)}
-          onTaskCountChange={(delta) => changeTaskCount(activePhase.id, delta)}
+          onTasksChanged={data.reload}
         />
       ) : (
         <Card>
@@ -230,17 +232,12 @@ interface PhaseTasksProps {
   environmentId: string
   onRename: () => void
   onDelete: () => void
-  onTaskCountChange: (delta: number) => void
+  /** Algo cambió en las tareas (alta o cronómetro): el padre recarga conteos y tiempos. */
+  onTasksChanged: () => void
 }
 
 /** Lista de tareas de la fase activa: alta rápida, filtro por estado y cronómetro. */
-function PhaseTasks({
-  phase,
-  environmentId,
-  onRename,
-  onDelete,
-  onTaskCountChange
-}: PhaseTasksProps) {
+function PhaseTasks({ phase, environmentId, onRename, onDelete, onTasksChanged }: PhaseTasksProps) {
   const navigate = useNavigate()
   const loadTasks = useCallback(() => unwrap(api.tasks.list(phase.id)), [phase.id])
   const tasks = useAsyncData(loadTasks)
@@ -265,7 +262,7 @@ function PhaseTasks({
     try {
       const created = await unwrap(api.tasks.create({ phaseId: phase.id, title }))
       tasks.setData((current) => [toSummary(created), ...current])
-      onTaskCountChange(1)
+      onTasksChanged()
       setNewTitle('')
     } catch (caught) {
       setActionError(getErrorMessage(caught))
@@ -282,12 +279,21 @@ function PhaseTasks({
         ? api.tasks.pauseTimer(task.id)
         : api.tasks.startTimer(task.id)
       replaceTask(await unwrap(request))
+      onTasksChanged()
     } catch (caught) {
       setActionError(getErrorMessage(caught))
     } finally {
       setBusyTaskId(null)
     }
   }
+
+  // Con las tareas cargadas, el total de la fase se calcula aquí para reflejar cada cambio al instante.
+  const phaseTotals: TimeTotals = tasks.data
+    ? {
+        timeSpentSeconds: tasks.data.reduce((total, task) => total + task.timeSpentSeconds, 0),
+        runningTimerStartedAts: tasks.data.flatMap(runningTimersOf)
+      }
+    : phase
 
   const visibleTasks =
     tasks.data?.filter((task) => filter === TASK_FILTER_ALL || task.statusId === filter) ?? []
@@ -301,6 +307,7 @@ function PhaseTasks({
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-bold">{phase.name}</h2>
+          <TimeTotalBadge totals={phaseTotals} label={PHASE_TEXTS.TOTAL_TIME} className="mr-1" />
           <Button
             iconOnly
             size={BUTTON_SIZES.SM}
@@ -401,7 +408,7 @@ function PhaseTasks({
                   <ElapsedTime
                     className="text-sm text-muted"
                     timeSpentSeconds={task.timeSpentSeconds}
-                    timerStartedAt={task.timerStartedAt}
+                    runningTimerStartedAts={runningTimersOf(task)}
                   />
                   <TimerButton
                     iconOnly

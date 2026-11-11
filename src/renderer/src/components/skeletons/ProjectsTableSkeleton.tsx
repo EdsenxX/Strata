@@ -2,7 +2,7 @@ import { Card } from '../ui/Card'
 import { Skeleton, SkeletonGroup } from '../ui/Skeleton'
 
 const ROW_COUNT = 4
-const COLUMN_WIDTHS = ['w-32', 'w-56', 'w-36', 'w-20', 'w-20']
+const COLUMN_WIDTHS = ['w-32', 'w-56', 'w-36', 'w-16', 'w-20', 'w-20']
 
 /** Imita la tabla de proyectos de un entorno. */
 export function ProjectsTableSkeleton() {
@@ -22,6 +22,7 @@ export function ProjectsTableSkeleton() {
               <Skeleton className="h-2.5 w-full rounded-full" />
               <Skeleton className="h-3 w-16 rounded-full" />
             </div>
+            <Skeleton className="h-4 w-16 rounded-full" />
             <Skeleton className="h-4 w-20 rounded-full" />
             <Skeleton className="h-4 w-20 rounded-full" />
             <div className="ml-auto flex gap-2">

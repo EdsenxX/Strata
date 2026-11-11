@@ -32,6 +32,26 @@ export function formatDuration(totalSeconds: number): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
 }
 
+/** Segundos transcurridos desde `startedAt` (nunca negativos). */
+function secondsSince(startedAt: string | Date, now: number): number {
+  return Math.max(0, Math.floor((now - new Date(startedAt).getTime()) / TIME_UNITS.MS_PER_SECOND))
+}
+
+/**
+ * Tiempo total de un grupo (tarea, fase o proyecto): lo acumulado más el tramo en curso de cada
+ * cronómetro activo.
+ */
+export function computeTotalSeconds(
+  timeSpentSeconds: number,
+  runningTimerStartedAts: readonly (string | Date)[],
+  now: number = Date.now()
+): number {
+  return runningTimerStartedAts.reduce<number>(
+    (total, startedAt) => total + secondsSince(startedAt, now),
+    timeSpentSeconds
+  )
+}
+
 /**
  * Tiempo total de una tarea: lo acumulado más el tramo del cronómetro en curso.
  */
@@ -40,8 +60,5 @@ export function computeElapsedSeconds(
   timerStartedAt: string | Date | null,
   now: number = Date.now()
 ): number {
-  if (!timerStartedAt) return timeSpentSeconds
-  const startedAt = new Date(timerStartedAt).getTime()
-  const runningSeconds = Math.max(0, Math.floor((now - startedAt) / TIME_UNITS.MS_PER_SECOND))
-  return timeSpentSeconds + runningSeconds
+  return computeTotalSeconds(timeSpentSeconds, timerStartedAt ? [timerStartedAt] : [], now)
 }

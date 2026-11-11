@@ -17,7 +17,7 @@ import {
 import type { TaskDto } from '@shared/types'
 import { api, getErrorMessage, unwrap } from '../api/client'
 import { MarkdownEditor } from '../components/editor/MarkdownEditor'
-import { ElapsedTime } from '../components/tasks/ElapsedTime'
+import { ElapsedTime, runningTimersOf } from '../components/tasks/ElapsedTime'
 import { ManualTimeModal } from '../components/tasks/ManualTimeModal'
 import { StatusSelector } from '../components/tasks/StatusSelector'
 import { TimerButton } from '../components/tasks/TimerButton'
@@ -202,7 +202,7 @@ export function TaskDetailPage() {
               <ElapsedTime
                 className="text-3xl font-semibold text-ink"
                 timeSpentSeconds={task.timeSpentSeconds}
-                timerStartedAt={task.timerStartedAt}
+                runningTimerStartedAts={runningTimersOf(task)}
               />
               {running && (
                 <span className="text-xs text-info">{TASK_TEXTS.TIMER_RUNNING_HINT}</span>

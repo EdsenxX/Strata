@@ -8,6 +8,7 @@ import type {
   TaskDto,
   TaskStatusDto,
   TaskSummaryDto,
+  TimeTotals,
   UserDto
 } from '@shared/types'
 import type { EnvironmentRecord } from '../database/models/Environment'
@@ -45,7 +46,7 @@ export function toEnvironmentDto(
   }
 }
 
-export interface TaskCounts {
+export interface TaskCounts extends TimeTotals {
   taskCount: number
   completedTaskCount: number
 }
@@ -57,20 +58,28 @@ export function toProjectDto(project: ProjectRecord, counts: TaskCounts): Projec
     name: project.name,
     description: project.description ?? '',
     taskCount: counts.taskCount,
+    timeSpentSeconds: counts.timeSpentSeconds,
+    runningTimerStartedAts: counts.runningTimerStartedAts,
     completedTaskCount: counts.completedTaskCount,
     createdAt: toIso(project.createdAt),
     updatedAt: toIso(project.updatedAt)
   }
 }
 
-export function toPhaseDto(phase: PhaseRecord, taskCount: number): PhaseDto {
+export interface PhaseStats extends TimeTotals {
+  taskCount: number
+}
+
+export function toPhaseDto(phase: PhaseRecord, stats: PhaseStats): PhaseDto {
   return {
     id: phase._id.toString(),
     projectId: phase.projectId.toString(),
     environmentId: phase.environmentId.toString(),
     name: phase.name,
     order: phase.order,
-    taskCount,
+    taskCount: stats.taskCount,
+    timeSpentSeconds: stats.timeSpentSeconds,
+    runningTimerStartedAts: stats.runningTimerStartedAts,
     createdAt: toIso(phase.createdAt),
     updatedAt: toIso(phase.updatedAt)
   }
