@@ -7,10 +7,14 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.2.0] - 2026-11-11
+
 ### Agregado
 
 - Selector de tema claro, oscuro o del sistema; la elección se recuerda en el equipo.
 - Asterisco rojo en los campos obligatorios y leyenda "\* Campos obligatorios" en los formularios.
+- Instaladores para Windows (`.exe`) y Ubuntu (`.deb` y AppImage) publicados automáticamente en GitHub Releases
+  y descargables desde el README.
 
 ### Cambiado
 
