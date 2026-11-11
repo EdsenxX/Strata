@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.9.0] - 2026-11-11
+
 ### Agregado
 
 - Opción **Actualizar al iniciar** en Configuración: al abrir Strata, si hay una versión nueva, se descarga e instala
