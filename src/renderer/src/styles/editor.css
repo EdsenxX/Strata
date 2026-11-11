@@ -1,0 +1,46 @@
+/*
+ * Adaptación del editor Milkdown Crepe al sistema neumórfico.
+ * Solo se sobrescriben las variables del tema "frame" de Crepe.
+ */
+@import '@milkdown/crepe/theme/common/style.css';
+@import '@milkdown/crepe/theme/frame.css';
+
+.strata-editor .milkdown {
+  --crepe-color-background: var(--neu-bg);
+  --crepe-color-on-background: var(--neu-text);
+  --crepe-color-surface: var(--neu-bg);
+  --crepe-color-surface-low: color-mix(in srgb, var(--neu-shadow-dark) 35%, var(--neu-bg));
+  --crepe-color-on-surface: var(--neu-text);
+  --crepe-color-on-surface-variant: var(--neu-text-muted);
+  --crepe-color-outline: var(--neu-text-muted);
+  --crepe-color-primary: var(--neu-accent);
+  --crepe-color-secondary: color-mix(in srgb, var(--neu-accent) 20%, var(--neu-bg));
+  --crepe-color-on-secondary: var(--neu-text);
+  --crepe-color-inverse: var(--neu-text);
+  --crepe-color-on-inverse: var(--neu-bg);
+  --crepe-color-inline-code: var(--neu-danger);
+  --crepe-color-error: var(--neu-danger);
+  --crepe-color-hover: color-mix(in srgb, var(--neu-shadow-dark) 45%, var(--neu-bg));
+  --crepe-color-selected: color-mix(in srgb, var(--neu-accent) 18%, var(--neu-bg));
+  --crepe-color-inline-area: color-mix(in srgb, var(--neu-shadow-dark) 55%, var(--neu-bg));
+
+  --crepe-font-title: var(--font-sans);
+  --crepe-font-default: var(--font-sans);
+  --crepe-font-code: var(--font-mono);
+  --crepe-base-font-size: 15px;
+
+  --crepe-shadow-1: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+  --crepe-shadow-2: 6px 6px 14px var(--neu-shadow-dark), -6px -6px 14px var(--neu-shadow-light);
+
+  background: transparent;
+}
+
+.strata-editor .milkdown .ProseMirror {
+  padding: 8px 8px 48px 72px;
+  min-height: 320px;
+}
+
+.strata-editor .milkdown :is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}

@@ -1,0 +1,17 @@
+/**
+ * Códigos de error que el proceso principal devuelve a la interfaz.
+ * Los mensajes legibles viven en `texts.ts` (ERROR_MESSAGES).
+ */
+export const ERROR_CODES = {
+  UNAUTHENTICATED: 'UNAUTHENTICATED',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  EMAIL_TAKEN: 'EMAIL_TAKEN',
+  USERNAME_TAKEN: 'USERNAME_TAKEN',
+  VALIDATION_FAILED: 'VALIDATION_FAILED',
+  NOT_FOUND: 'NOT_FOUND',
+  TIMER_RUNNING: 'TIMER_RUNNING',
+  DATABASE_UNAVAILABLE: 'DATABASE_UNAVAILABLE',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]

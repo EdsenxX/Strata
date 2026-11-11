@@ -1,0 +1,105 @@
+/*
+ * Sistema de diseño neumórfico de Strata.
+ * Ver DESIGN.md para la explicación de tokens y reglas de uso.
+ */
+@import 'tailwindcss';
+@import './fonts.css';
+
+/* Tokens base (tema claro). Todos los componentes consumen estas variables. */
+:root {
+  --neu-bg: #e7ebf1;
+  --neu-shadow-dark: #c4cad4;
+  --neu-shadow-light: #ffffff;
+  --neu-text: #2d3546;
+  --neu-text-muted: #6c7689;
+  --neu-accent: #5b6cf0;
+  --neu-accent-contrast: #ffffff;
+  --neu-success: #23996f;
+  --neu-warning: #d48a1c;
+  --neu-danger: #dc4a5a;
+  --neu-info: #3f86d8;
+  --neu-overlay: rgb(45 53 70 / 0.25);
+
+  color-scheme: light;
+}
+
+/* Tema oscuro automático según el sistema operativo. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --neu-bg: #262a33;
+    --neu-shadow-dark: #1a1d23;
+    --neu-shadow-light: #323743;
+    --neu-text: #e3e7ef;
+    --neu-text-muted: #9aa3b5;
+    --neu-accent: #8292ff;
+    --neu-accent-contrast: #10131a;
+    --neu-success: #4cc79a;
+    --neu-warning: #f0b252;
+    --neu-danger: #f07583;
+    --neu-info: #6fb0f5;
+    --neu-overlay: rgb(0 0 0 / 0.45);
+
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-base: var(--neu-bg);
+  --color-ink: var(--neu-text);
+  --color-muted: var(--neu-text-muted);
+  --color-accent: var(--neu-accent);
+  --color-accent-contrast: var(--neu-accent-contrast);
+  --color-success: var(--neu-success);
+  --color-warning: var(--neu-warning);
+  --color-danger: var(--neu-danger);
+  --color-info: var(--neu-info);
+  --color-overlay: var(--neu-overlay);
+
+  --radius-neu: 1.25rem;
+  --radius-neu-sm: 0.875rem;
+
+  /* Sombras neumórficas: "raised" sobresale de la superficie, "inset" se hunde en ella. */
+  --shadow-neu-sm: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+  --shadow-neu: 6px 6px 14px var(--neu-shadow-dark), -6px -6px 14px var(--neu-shadow-light);
+  --shadow-neu-lg: 12px 12px 28px var(--neu-shadow-dark), -12px -12px 28px var(--neu-shadow-light);
+  --shadow-neu-inset-sm:
+    inset 2px 2px 5px var(--neu-shadow-dark), inset -2px -2px 5px var(--neu-shadow-light);
+  --shadow-neu-inset:
+    inset 4px 4px 10px var(--neu-shadow-dark), inset -4px -4px 10px var(--neu-shadow-light);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--neu-bg);
+    color: var(--neu-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--neu-accent) 60%, transparent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--neu-accent) 30%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0s !important;
+      animation-duration: 0s !important;
+    }
+  }
+}
