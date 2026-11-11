@@ -18,14 +18,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Además de los instaladores se publican los metadatos que usa electron-updater.
           - os: windows-latest
             script: dist:win
-            files: dist/Strata-Setup-x64.exe
+            files: |
+              dist/Strata-Setup-x64.exe
+              dist/Strata-Setup-x64.exe.blockmap
+              dist/latest.yml
           - os: ubuntu-latest
             script: dist:linux
             files: |
               dist/Strata-x64.AppImage
               dist/Strata-x64.deb
+              dist/latest-linux.yml
     steps:
       - uses: actions/checkout@v7
 
