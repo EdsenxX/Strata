@@ -10,6 +10,7 @@ import { ProjectDetailPage } from './pages/ProjectDetailPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { TaskDetailPage } from './pages/TaskDetailPage'
 import { useAuthStore } from './stores/authStore'
+import { useThemeStore } from './stores/themeStore'
 
 /**
  * Raíz de la interfaz. Se usa HashRouter porque en producción la app se carga
@@ -17,10 +18,12 @@ import { useAuthStore } from './stores/authStore'
  */
 export function App() {
   const bootstrap = useAuthStore((state) => state.bootstrap)
+  const loadTheme = useThemeStore((state) => state.load)
 
   useEffect(() => {
     void bootstrap()
-  }, [bootstrap])
+    void loadTheme()
+  }, [bootstrap, loadTheme])
 
   return (
     <HashRouter>

@@ -15,8 +15,9 @@ export const MAIN_WINDOW = {
   HEIGHT: 820,
   MIN_WIDTH: 960,
   MIN_HEIGHT: 640,
-  /** Color de fondo inicial para evitar destellos mientras carga React (tema claro). */
-  BACKGROUND_COLOR: '#e7ebf1'
+  /** Colores de fondo de la ventana (iguales a --neu-bg) para evitar destellos al cargar. */
+  BACKGROUND_COLOR_LIGHT: '#e7ebf1',
+  BACKGROUND_COLOR_DARK: '#262a33'
 } as const
 
 /** Protocolos que se permiten abrir en el navegador externo. */

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { COMMON_TEXTS } from '@shared/constants'
+import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { VersionBadge } from '../ui/VersionBadge'
 import { Logo } from './Logo'
 
@@ -12,7 +13,10 @@ export function AuthLayout({ children, wide = false }: { children: ReactNode; wi
         <p className="text-sm text-muted">{COMMON_TEXTS.APP_TAGLINE}</p>
       </div>
       <main className={wide ? 'w-full max-w-2xl' : 'w-full max-w-md'}>{children}</main>
-      <VersionBadge />
+      <div className="flex items-center gap-4">
+        <ThemeSwitcher />
+        <VersionBadge />
+      </div>
     </div>
   )
 }

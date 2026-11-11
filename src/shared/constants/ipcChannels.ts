@@ -32,7 +32,10 @@ export const IPC_CHANNELS = {
   TASKS_DELETE: 'tasks:delete',
   TASKS_START_TIMER: 'tasks:start-timer',
   TASKS_PAUSE_TIMER: 'tasks:pause-timer',
-  TASKS_SET_TIME: 'tasks:set-time'
+  TASKS_SET_TIME: 'tasks:set-time',
+
+  PREFERENCES_GET_THEME: 'preferences:get-theme',
+  PREFERENCES_SET_THEME: 'preferences:set-theme'
 } as const
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS]

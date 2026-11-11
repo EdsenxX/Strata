@@ -5,6 +5,7 @@
 import { APP_NAME } from './app'
 import { ENV_FILE_NAME, ENV_KEYS } from './database'
 import { ERROR_CODES, type ErrorCode } from './errorCodes'
+import { THEME_MODES } from './preferences'
 import { TASK_STATUS, type TaskStatus } from './taskStatus'
 import { FIELD_LIMITS, PASSWORD_POLICY, PASSWORD_RULE_IDS, type PasswordRuleId } from './validation'
 
@@ -94,6 +95,13 @@ export const MAIN_PROCESS_TEXTS = {
       `Crea un archivo ${ENV_FILE_NAME} con ${ENV_KEYS.MONGODB_URI} y ${ENV_KEYS.MONGODB_DB_NAME} en alguna de estas rutas:`,
       ...searchedPaths.map((path) => `• ${path}`)
     ].join('\n')
+} as const
+
+export const THEME_TEXTS = {
+  LABEL: 'Tema',
+  [THEME_MODES.LIGHT]: 'Claro',
+  [THEME_MODES.DARK]: 'Oscuro',
+  [THEME_MODES.SYSTEM]: 'Sistema'
 } as const
 
 export const NAV_TEXTS = {

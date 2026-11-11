@@ -2,6 +2,7 @@
  * Contrato de la API que el preload expone en `window.strata`.
  */
 import type { ErrorCode } from '../constants/errorCodes'
+import type { ThemeMode } from '../constants/preferences'
 import type {
   EnvironmentDto,
   PhaseDto,
@@ -66,5 +67,9 @@ export interface StrataApi {
     startTimer: Call<string, TaskDto>
     pauseTimer: Call<string, TaskDto>
     setTime: Call<SetTaskTimeInput, TaskDto>
+  }
+  preferences: {
+    getTheme: CallWithoutInput<ThemeMode>
+    setTheme: Call<ThemeMode, ThemeMode>
   }
 }

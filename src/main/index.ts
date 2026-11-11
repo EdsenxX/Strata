@@ -2,7 +2,7 @@
  * Proceso principal de Electron: ventana, configuración, base de datos e IPC.
  */
 import { join } from 'node:path'
-import { app, BrowserWindow, dialog, shell } from 'electron'
+import { app, BrowserWindow, dialog, nativeTheme, shell } from 'electron'
 import { APP_ID, EXTERNAL_PROTOCOLS, MAIN_PROCESS_TEXTS, MAIN_WINDOW } from '@shared/constants'
 import { ConfigError, loadAppConfig } from './config/env'
 import {
@@ -11,6 +11,7 @@ import {
   ensureDatabaseConnection
 } from './database/connection'
 import { registerIpcHandlers } from './ipc/registerIpcHandlers'
+import { applyStoredThemeMode } from './services/preferencesService'
 
 /** URL del servidor de desarrollo que inyecta electron-vite. */
 const DEV_SERVER_URL_KEY = 'ELECTRON_RENDERER_URL'
@@ -23,13 +24,19 @@ function isExternalUrlAllowed(url: string): boolean {
   }
 }
 
+/** Color de fondo nativo acorde al tema efectivo (evita destellos al cargar o redimensionar). */
+const getWindowBackgroundColor = (): string =>
+  nativeTheme.shouldUseDarkColors
+    ? MAIN_WINDOW.BACKGROUND_COLOR_DARK
+    : MAIN_WINDOW.BACKGROUND_COLOR_LIGHT
+
 function createMainWindow(): BrowserWindow {
   const window = new BrowserWindow({
     width: MAIN_WINDOW.WIDTH,
     height: MAIN_WINDOW.HEIGHT,
     minWidth: MAIN_WINDOW.MIN_WIDTH,
     minHeight: MAIN_WINDOW.MIN_HEIGHT,
-    backgroundColor: MAIN_WINDOW.BACKGROUND_COLOR,
+    backgroundColor: getWindowBackgroundColor(),
     show: false,
     autoHideMenuBar: true,
     webPreferences: {
@@ -41,6 +48,10 @@ function createMainWindow(): BrowserWindow {
   })
 
   window.once('ready-to-show', () => window.show())
+
+  const syncBackgroundColor = () => window.setBackgroundColor(getWindowBackgroundColor())
+  nativeTheme.on('updated', syncBackgroundColor)
+  window.once('closed', () => nativeTheme.off('updated', syncBackgroundColor))
 
   // Los enlaces externos (por ejemplo, dentro del Markdown) se abren en el navegador.
   window.webContents.setWindowOpenHandler(({ url }) => {
@@ -61,6 +72,7 @@ function createMainWindow(): BrowserWindow {
 }
 
 async function bootstrap(): Promise<void> {
+  await applyStoredThemeMode()
   try {
     configureDatabase(loadAppConfig())
   } catch (error) {

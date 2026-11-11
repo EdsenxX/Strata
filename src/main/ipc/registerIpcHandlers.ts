@@ -2,7 +2,7 @@
  * Registro de todos los manejadores IPC.
  *
  * Cada manejador:
- * 1. Garantiza la conexión a la base de datos.
+ * 1. Garantiza la conexión a la base de datos (salvo los que no la necesitan).
  * 2. Ejecuta el servicio correspondiente.
  * 3. Devuelve un `ApiResult` (nunca propaga excepciones a la interfaz).
  */
@@ -14,18 +14,30 @@ import { AppError } from '../errors/AppError'
 import * as authService from '../services/authService'
 import * as environmentService from '../services/environmentService'
 import * as phaseService from '../services/phaseService'
+import * as preferencesService from '../services/preferencesService'
 import * as projectService from '../services/projectService'
 import * as taskService from '../services/taskService'
 
 type Handler<T> = (input: unknown) => Promise<T>
 
-function handle<T>(channel: IpcChannel, handler: Handler<T>): void {
+interface HandleOptions {
+  /** `false` para operaciones locales que no tocan MongoDB (por ejemplo, preferencias). */
+  requiresDatabase?: boolean
+}
+
+function handle<T>(
+  channel: IpcChannel,
+  handler: Handler<T>,
+  { requiresDatabase = true }: HandleOptions = {}
+): void {
   ipcMain.handle(channel, async (_event, input: unknown): Promise<ApiResult<T>> => {
-    try {
-      await ensureDatabaseConnection()
-    } catch (error) {
-      console.error(`[ipc:${channel}] database connection failed`, error)
-      return { ok: false, error: ERROR_CODES.DATABASE_UNAVAILABLE }
+    if (requiresDatabase) {
+      try {
+        await ensureDatabaseConnection()
+      } catch (error) {
+        console.error(`[ipc:${channel}] database connection failed`, error)
+        return { ok: false, error: ERROR_CODES.DATABASE_UNAVAILABLE }
+      }
     }
     try {
       return { ok: true, data: await handler(input) }
@@ -68,4 +80,8 @@ export function registerIpcHandlers(): void {
   handle(IPC_CHANNELS.TASKS_START_TIMER, taskService.startTaskTimer)
   handle(IPC_CHANNELS.TASKS_PAUSE_TIMER, taskService.pauseTaskTimer)
   handle(IPC_CHANNELS.TASKS_SET_TIME, taskService.setTaskTime)
+
+  const local = { requiresDatabase: false }
+  handle(IPC_CHANNELS.PREFERENCES_GET_THEME, preferencesService.getThemeMode, local)
+  handle(IPC_CHANNELS.PREFERENCES_SET_THEME, preferencesService.setThemeMode, local)
 }

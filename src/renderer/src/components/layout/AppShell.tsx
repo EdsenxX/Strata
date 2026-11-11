@@ -5,6 +5,7 @@ import { useAuthStore } from '../../stores/authStore'
 import { getDisplayName, getInitials } from '../../utils/format'
 import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../ui/Button'
 import { cn } from '../ui/cn'
+import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { VersionBadge } from '../ui/VersionBadge'
 import { Logo } from './Logo'
 
@@ -55,7 +56,10 @@ export function AppShell() {
               />
             </div>
           )}
-          <VersionBadge className="self-start" />
+          <div className="flex items-center justify-between gap-3">
+            <ThemeSwitcher />
+            <VersionBadge />
+          </div>
         </div>
       </aside>
 
