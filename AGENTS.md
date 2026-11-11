@@ -36,6 +36,7 @@ npm run dev          # App en modo desarrollo con recarga
 npm run typecheck    # Tipos del proceso principal/preload y de la interfaz
 npm run lint         # ESLint
 npm run format       # Prettier (format:check solo verifica)
+npm run icon         # Regenera build/icon.png y build/icons/*.png desde build/icon.svg
 npm run build        # typecheck + build de producción en out/
 npm run dist:linux   # Instaladores AppImage y deb en dist/
 npm run dist:win     # Instalador NSIS en dist/ (idealmente desde Windows)
@@ -237,6 +238,14 @@ Las skills viven en `.agents/skills/<nombre>/SKILL.md` (convención abierta de A
 - En desarrollo se lee `.env` de la raíz. En la app instalada se busca en la carpeta de datos del usuario
   (`~/.config/Strata/.env` en Linux, `%APPDATA%\Strata\.env` en Windows) o junto al ejecutable.
 - Si falta configuración, la app muestra un diálogo con las rutas buscadas y se cierra.
+
+## Ícono de la app
+
+- Fuente única: `build/icon.svg` (tres capas sobre un cuadro neumórfico, a juego con el logo).
+- `npm run icon` (`scripts/render-icon.cjs`) lo renderiza con el propio Electron a `build/icon.png` (1024 px:
+  ventana y `.ico` de Windows) y a `build/icons/<N>x<N>.png` (16–1024 px: lanzador y dock en Linux).
+- Si cambias el SVG, ejecuta `npm run icon` y versiona los PNG generados.
+- La ventana lo carga con `import appIcon from '../../build/icon.png?asset'` en `src/main/index.ts`.
 
 ## Gotchas
 

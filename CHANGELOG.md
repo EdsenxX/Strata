@@ -7,6 +7,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Cambiado
+
+- Nuevo ícono de la app (tres capas sobre un cuadro neumórfico) en lugar del ícono por defecto de Electron, en la
+  ventana, el lanzador de Ubuntu (todos los tamaños) y el instalador de Windows.
+
 ## [0.9.0] - 2026-11-11
 
 ### Agregado
