@@ -7,6 +7,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Agregado
+
+- Tiempo total por fase (suma de sus tareas) en las pestañas de fases y en el encabezado de la fase.
+- Tiempo total por proyecto (suma de sus fases) en el encabezado del proyecto y en una nueva columna **Tiempo** de
+  la tabla de proyectos. Los totales avanzan en vivo mientras haya cronómetros en marcha.
+
 ## [0.5.0] - 2026-11-11
 
 ### Cambiado

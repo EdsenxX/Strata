@@ -112,6 +112,10 @@ src/
 - Cambiar a un estado de otra categoría detiene el cronómetro y acumula.
 - La edición manual del tiempo no se permite con el cronómetro en marcha (`TIMER_RUNNING`).
 - La interfaz calcula el tiempo vivo con `computeElapsedSeconds()`; el valor sobrevive a cierres de la app.
+- **Totales de fase y proyecto**: `PhaseDto` y `ProjectDto` extienden `TimeTotals` (`timeSpentSeconds` sumado en
+  la agregación + `runningTimerStartedAts` de los cronómetros activos, ver `services/timeTotals.ts`). La interfaz
+  suma el tramo en curso con `computeTotalSeconds()` / `useLiveSeconds()`, así los totales corren en vivo. El total
+  del proyecto es la suma de todas sus tareas (equivale a sumar sus fases).
 
 ## Convenciones
 
