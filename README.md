@@ -24,6 +24,7 @@ El nombre viene de _strata_ (estratos): cada nivel es una capa que envuelve a la
 - **Fases**: etapas dentro del proyecto para agrupar tareas.
 - **Tareas**:
   - Título y contenido en Markdown con editor de bloques estilo Notion (escribe `/` para insertar bloques).
+  - Imágenes en el contenido: pégalas, arrástralas o súbelas; redimensiónalas, agrégales leyenda y muévelas.
   - Estados: Pendiente, En progreso, En pausa, Completada.
   - Tiempo invertido con cronómetro (iniciar/pausar, sobrevive a cierres de la app) o captura manual.
 - **Diseño neumórfico** con tema claro, oscuro o el del sistema (a elección, se recuerda por equipo) y fuentes locales (Plus Jakarta Sans, JetBrains Mono).

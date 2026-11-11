@@ -103,6 +103,22 @@ src/
 - La interfaz carga el catálogo en `statusStore` (Zustand) desde `AppShell`; `StatusBadge` y `StatusSelector` lo leen.
 - Con `sanitizeFilter` activo, los operadores en filtros (`$ne`, `$in`…) deben envolverse en `mongoose.trusted()`.
 
+### Imágenes en el contenido de las tareas
+
+- El editor (Crepe `ImageBlock`) permite insertar imágenes con "/" → Imagen, pegándolas o arrastrándolas;
+  redimensionarlas (asa inferior), agregar leyenda y moverlas con el asa de bloque.
+- La interfaz optimiza antes de subir (`utils/imageOptimizer.ts`: máx. 2000 px, WebP; GIF intacto) y llama a
+  `api.images.upload`. El proceso principal guarda los bytes en la colección `task_images` (máx. 5 MB) con
+  `userId`, `environmentId`, `projectId`, `phaseId` y `taskId`.
+- El Markdown solo guarda `![<proporción>](strata-media://images/<id> "<leyenda>")`. El protocolo privilegiado
+  `strata-media` (registrado en `main/index.ts`, manejado por `imageService.handleMediaRequest`) entrega la imagen
+  solo si pertenece al usuario con sesión. La CSP del renderer permite `img-src strata-media:`.
+- `MarkdownEditor` reemplaza el subidor de Crepe (pegar/arrastrar) para omitir imágenes fallidas sin dejar el aviso
+  de carga atascado.
+- Borrar una tarea, fase, proyecto o entorno borra sus imágenes. Quitar una imagen del texto no la borra de la base
+  (permite deshacer); limpiar huérfanas queda como mejora futura.
+- La imagen se lee sin `.lean()`: con lean, el campo binario llega como `Binary` del driver y no como `Buffer`.
+
 ### Cronómetro de tareas
 
 - `timeSpentSeconds`: tiempo acumulado de tramos cerrados.
@@ -140,6 +156,7 @@ Ninguna cadena o número con significado de negocio va suelto en el código:
 | Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                                                  |
 | Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)                                    |
 | Tema y preferencias     | `THEME_MODES`, `THEME_MODE_VALUES`, `PREFERENCES_FILE_NAME` (`preferences.ts`)                   |
+| Imágenes                | `MEDIA_PROTOCOL`, `buildImageUrl`, `IMAGE_UPLOAD`, `IMAGE_MIME_TYPES` (`media.ts`)               |
 | Actualizaciones         | `UPDATE_STATUS`, `UPDATE_SCHEDULE`, `DEFAULT_AUTO_DOWNLOAD_UPDATES` (`updates.ts`), `IPC_EVENTS` |
 | Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)                            |
 

@@ -7,6 +7,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Agregado
+
+- Imágenes en el contenido de las tareas: se insertan con "/" → Imagen, pegándolas o arrastrándolas; se pueden
+  redimensionar, agregarles leyenda y moverlas. Se optimizan antes de subir (máx. 2000 px, WebP) y se guardan en
+  MongoDB junto con tus datos.
+
 ## [0.6.0] - 2026-11-11
 
 ### Agregado
