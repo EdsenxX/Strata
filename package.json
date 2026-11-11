@@ -24,7 +24,8 @@
     "dist:linux": "npm run build && electron-builder --linux --publish never",
     "dist:win": "npm run build && electron-builder --win --publish never",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -48,6 +49,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
     "lucide-react": "^1.72.0",
+    "patch-package": "^8.0.1",
     "prettier": "^3.9.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

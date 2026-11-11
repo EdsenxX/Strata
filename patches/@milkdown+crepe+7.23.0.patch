@@ -1,0 +1,52 @@
+diff --git a/node_modules/@milkdown/crepe/lib/cjs/feature/block-edit/index.js b/node_modules/@milkdown/crepe/lib/cjs/feature/block-edit/index.js
+index 69a885d..0b430ce 100644
+--- a/node_modules/@milkdown/crepe/lib/cjs/feature/block-edit/index.js
++++ b/node_modules/@milkdown/crepe/lib/cjs/feature/block-edit/index.js
+@@ -738,7 +738,7 @@ function getGroups(filter, config, ctx) {
+   if (filter) {
+     groups = groups.map((group) => {
+       const items2 = group.items.filter(
+-        (item) => item.label.toLowerCase().includes(filter.toLowerCase())
++        (item) => item.label.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim())
+       );
+       return {
+         ...group,
+diff --git a/node_modules/@milkdown/crepe/lib/cjs/index.js b/node_modules/@milkdown/crepe/lib/cjs/index.js
+index 86cd15a..89273b6 100644
+--- a/node_modules/@milkdown/crepe/lib/cjs/index.js
++++ b/node_modules/@milkdown/crepe/lib/cjs/index.js
+@@ -2502,7 +2502,7 @@ function getGroups$2(filter, config, ctx) {
+   if (filter) {
+     groups = groups.map((group) => {
+       const items2 = group.items.filter(
+-        (item) => item.label.toLowerCase().includes(filter.toLowerCase())
++        (item) => item.label.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim())
+       );
+       return {
+         ...group,
+diff --git a/node_modules/@milkdown/crepe/lib/esm/feature/block-edit/index.js b/node_modules/@milkdown/crepe/lib/esm/feature/block-edit/index.js
+index e10bae8..2175a19 100644
+--- a/node_modules/@milkdown/crepe/lib/esm/feature/block-edit/index.js
++++ b/node_modules/@milkdown/crepe/lib/esm/feature/block-edit/index.js
+@@ -736,7 +736,7 @@ function getGroups(filter, config, ctx) {
+   if (filter) {
+     groups = groups.map((group) => {
+       const items2 = group.items.filter(
+-        (item) => item.label.toLowerCase().includes(filter.toLowerCase())
++        (item) => item.label.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim())
+       );
+       return {
+         ...group,
+diff --git a/node_modules/@milkdown/crepe/lib/esm/index.js b/node_modules/@milkdown/crepe/lib/esm/index.js
+index dcce7ee..194215b 100644
+--- a/node_modules/@milkdown/crepe/lib/esm/index.js
++++ b/node_modules/@milkdown/crepe/lib/esm/index.js
+@@ -2500,7 +2500,7 @@ function getGroups$2(filter, config, ctx) {
+   if (filter) {
+     groups = groups.map((group) => {
+       const items2 = group.items.filter(
+-        (item) => item.label.toLowerCase().includes(filter.toLowerCase())
++        (item) => item.label.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(filter.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim())
+       );
+       return {
+         ...group,
