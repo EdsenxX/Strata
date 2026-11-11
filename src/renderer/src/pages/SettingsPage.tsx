@@ -13,7 +13,7 @@ import { PageHeader } from '../components/layout/PageHeader'
 import { BUTTON_VARIANTS, Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
-import { LoadingState } from '../components/ui/LoadingState'
+import { UpdatesSectionSkeleton } from '../components/skeletons/UpdatesSectionSkeleton'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { THEME_SWITCHER_VARIANTS, ThemeSwitcher } from '../components/ui/ThemeSwitcher'
 import { Toggle } from '../components/ui/Toggle'
@@ -72,7 +72,7 @@ export function SettingsPage() {
             description={SETTINGS_TEXTS.UPDATES_DESCRIPTION}
           />
           {!update || autoDownload === null ? (
-            <LoadingState />
+            <UpdatesSectionSkeleton />
           ) : (
             <div className="flex flex-col gap-6">
               <Toggle

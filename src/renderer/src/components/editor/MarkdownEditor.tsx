@@ -4,9 +4,10 @@
  *
  * Es un componente no controlado: para cargar otro documento, cambia su `key`.
  */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Crepe } from '@milkdown/crepe'
 import { EDITOR_TEXTS, TASK_TEXTS } from '@shared/constants'
+import { EditorSkeleton } from '../skeletons/EditorSkeleton'
 import '../../styles/editor.css'
 
 /** Traducción al español del menú "/" (solo etiquetas; los iconos son los de Crepe). */
@@ -45,6 +46,8 @@ interface MarkdownEditorProps {
 
 export function MarkdownEditor({ initialValue, onChange }: MarkdownEditorProps) {
   const rootRef = useRef<HTMLDivElement>(null)
+  // Crepe se inicializa de forma asíncrona; mientras tanto se muestra un skeleton.
+  const [ready, setReady] = useState(false)
   // Refs para que el editor (creado una sola vez) use siempre los valores más recientes.
   const initialValueRef = useRef(initialValue)
   const onChangeRef = useRef(onChange)
@@ -83,10 +86,16 @@ export function MarkdownEditor({ initialValue, onChange }: MarkdownEditorProps) 
     })
 
     const creation = crepe.create()
+    void creation.then(() => setReady(true))
     return () => {
       void creation.then(() => crepe.destroy())
     }
   }, [])
 
-  return <div ref={rootRef} className="strata-editor" />
+  return (
+    <>
+      {!ready && <EditorSkeleton />}
+      <div ref={rootRef} className="strata-editor" />
+    </>
+  )
 }

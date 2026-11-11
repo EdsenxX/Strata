@@ -14,7 +14,7 @@ import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
-import { LoadingState } from '../components/ui/LoadingState'
+import { StatusRowsSkeleton } from '../components/skeletons/StatusRowsSkeleton'
 import { StatusBadge } from '../components/ui/StatusBadge'
 import { useStatusStore } from '../stores/statusStore'
 
@@ -27,7 +27,8 @@ const findReplacement = (statuses: TaskStatusDto[], status: TaskStatusDto) =>
 
 /** Administración de los estados de tarea del usuario. */
 export function StatusesPage() {
-  const statuses = useStatusStore((state) => state.statuses)
+  const loadedStatuses = useStatusStore((state) => state.statuses)
+  const statuses = loadedStatuses ?? []
   const loadError = useStatusStore((state) => state.error)
   const { load, create, update, remove, reorder } = useStatusStore.getState()
   const [creating, setCreating] = useState(false)
@@ -39,14 +40,6 @@ export function StatusesPage() {
   useEffect(() => {
     void load()
   }, [load])
-
-  if (!statuses) {
-    return loadError ? (
-      <ErrorBanner message={loadError} onRetry={() => void load()} />
-    ) : (
-      <LoadingState />
-    )
-  }
 
   const move = async (index: number, direction: number) => {
     const ids = statuses.map((status) => status.id)
@@ -84,70 +77,79 @@ export function StatusesPage() {
         </div>
       )}
 
-      <Card className="p-4">
-        <ul className="flex flex-col gap-3">
-          {statuses.map((status, index) => {
-            const isLast = !findReplacement(statuses, status)
-            return (
-              <li
-                key={status.id}
-                className="flex items-center gap-4 rounded-neu-sm px-4 py-3 shadow-neu-sm"
-              >
-                <StatusBadge statusId={status.id} className="w-40" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold">{STATUS_CATEGORY_LABELS[status.category]}</p>
-                  <p className="truncate text-xs text-muted">
-                    {STATUS_CATEGORY_HINTS[status.category]}
-                  </p>
-                </div>
-                <span className="w-20 text-right text-xs text-muted">
-                  {STATUS_TEXTS.TASK_COUNT(status.taskCount)}
-                </span>
-                <div className="flex gap-2">
-                  <Button
-                    iconOnly
-                    size={BUTTON_SIZES.SM}
-                    variant={BUTTON_VARIANTS.GHOST}
-                    aria-label={STATUS_TEXTS.MOVE_UP}
-                    title={STATUS_TEXTS.MOVE_UP}
-                    disabled={index === 0}
-                    icon={<ArrowUp className="size-4" />}
-                    onClick={() => void move(index, MOVE_UP)}
-                  />
-                  <Button
-                    iconOnly
-                    size={BUTTON_SIZES.SM}
-                    variant={BUTTON_VARIANTS.GHOST}
-                    aria-label={STATUS_TEXTS.MOVE_DOWN}
-                    title={STATUS_TEXTS.MOVE_DOWN}
-                    disabled={index === statuses.length - 1}
-                    icon={<ArrowDown className="size-4" />}
-                    onClick={() => void move(index, MOVE_DOWN)}
-                  />
-                  <Button
-                    iconOnly
-                    size={BUTTON_SIZES.SM}
-                    aria-label={COMMON_TEXTS.EDIT}
-                    title={COMMON_TEXTS.EDIT}
-                    icon={<Pencil className="size-4" />}
-                    onClick={() => setEditing(status)}
-                  />
-                  <Button
-                    iconOnly
-                    size={BUTTON_SIZES.SM}
-                    variant={BUTTON_VARIANTS.DANGER}
-                    aria-label={COMMON_TEXTS.DELETE}
-                    title={isLast ? STATUS_TEXTS.LAST_IN_CATEGORY_HINT : COMMON_TEXTS.DELETE}
-                    disabled={isLast}
-                    icon={<Trash2 className="size-4" />}
-                    onClick={() => setDeleting(status)}
-                  />
-                </div>
-              </li>
-            )
-          })}
-        </ul>
-      </Card>
+      {!loadedStatuses && loadError && (
+        <ErrorBanner message={loadError} onRetry={() => void load()} />
+      )}
+      {!loadedStatuses && !loadError && <StatusRowsSkeleton />}
+
+      {loadedStatuses && (
+        <Card className="p-4">
+          <ul className="flex flex-col gap-3">
+            {statuses.map((status, index) => {
+              const isLast = !findReplacement(statuses, status)
+              return (
+                <li
+                  key={status.id}
+                  className="flex items-center gap-4 rounded-neu-sm px-4 py-3 shadow-neu-sm"
+                >
+                  <StatusBadge statusId={status.id} className="w-40" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">
+                      {STATUS_CATEGORY_LABELS[status.category]}
+                    </p>
+                    <p className="truncate text-xs text-muted">
+                      {STATUS_CATEGORY_HINTS[status.category]}
+                    </p>
+                  </div>
+                  <span className="w-20 text-right text-xs text-muted">
+                    {STATUS_TEXTS.TASK_COUNT(status.taskCount)}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      iconOnly
+                      size={BUTTON_SIZES.SM}
+                      variant={BUTTON_VARIANTS.GHOST}
+                      aria-label={STATUS_TEXTS.MOVE_UP}
+                      title={STATUS_TEXTS.MOVE_UP}
+                      disabled={index === 0}
+                      icon={<ArrowUp className="size-4" />}
+                      onClick={() => void move(index, MOVE_UP)}
+                    />
+                    <Button
+                      iconOnly
+                      size={BUTTON_SIZES.SM}
+                      variant={BUTTON_VARIANTS.GHOST}
+                      aria-label={STATUS_TEXTS.MOVE_DOWN}
+                      title={STATUS_TEXTS.MOVE_DOWN}
+                      disabled={index === statuses.length - 1}
+                      icon={<ArrowDown className="size-4" />}
+                      onClick={() => void move(index, MOVE_DOWN)}
+                    />
+                    <Button
+                      iconOnly
+                      size={BUTTON_SIZES.SM}
+                      aria-label={COMMON_TEXTS.EDIT}
+                      title={COMMON_TEXTS.EDIT}
+                      icon={<Pencil className="size-4" />}
+                      onClick={() => setEditing(status)}
+                    />
+                    <Button
+                      iconOnly
+                      size={BUTTON_SIZES.SM}
+                      variant={BUTTON_VARIANTS.DANGER}
+                      aria-label={COMMON_TEXTS.DELETE}
+                      title={isLast ? STATUS_TEXTS.LAST_IN_CATEGORY_HINT : COMMON_TEXTS.DELETE}
+                      disabled={isLast}
+                      icon={<Trash2 className="size-4" />}
+                      onClick={() => setDeleting(status)}
+                    />
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </Card>
+      )}
 
       <StatusFormModal
         open={creating}

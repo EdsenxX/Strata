@@ -11,7 +11,7 @@ import { Card } from '../components/ui/Card'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
-import { LoadingState } from '../components/ui/LoadingState'
+import { EnvironmentsGridSkeleton } from '../components/skeletons/EnvironmentsGridSkeleton'
 import { useAsyncData } from '../hooks/useAsyncData'
 import { formatDate } from '../utils/format'
 
@@ -59,7 +59,7 @@ export function EnvironmentsPage() {
         actions={newButton}
       />
 
-      {environments.status === ASYNC_STATUS.LOADING && <LoadingState />}
+      {environments.status === ASYNC_STATUS.LOADING && <EnvironmentsGridSkeleton />}
       {environments.status === ASYNC_STATUS.ERROR && (
         <ErrorBanner message={environments.error} onRetry={environments.reload} />
       )}

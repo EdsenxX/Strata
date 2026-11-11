@@ -1,5 +1,6 @@
 import { TASK_TEXTS } from '@shared/constants'
 import { useStatusStore } from '../../stores/statusStore'
+import { Skeleton } from '../ui/Skeleton'
 import { cn } from '../ui/cn'
 import { STATUS_COLOR_CLASSES } from '../ui/statusColors'
 
@@ -9,9 +10,20 @@ interface StatusSelectorProps {
   onChange: (statusId: string) => void
 }
 
+const SKELETON_OPTION_COUNT = 4
+
 /** Selector de estado con los estados del usuario (el activo queda hundido). */
 export function StatusSelector({ value, disabled, onChange }: StatusSelectorProps) {
-  const statuses = useStatusStore((state) => state.statuses) ?? []
+  const statuses = useStatusStore((state) => state.statuses)
+  if (!statuses) {
+    return (
+      <div className="grid grid-cols-2 gap-3" aria-hidden>
+        {Array.from({ length: SKELETON_OPTION_COUNT }, (_, index) => (
+          <Skeleton key={index} className="h-9" />
+        ))}
+      </div>
+    )
+  }
   return (
     <div role="radiogroup" aria-label={TASK_TEXTS.STATUS_LABEL} className="grid grid-cols-2 gap-3">
       {statuses.map((status) => {

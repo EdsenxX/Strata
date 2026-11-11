@@ -1,11 +1,13 @@
-import { useStatus } from '../../stores/statusStore'
+import { useStatus, useStatusStore } from '../../stores/statusStore'
+import { Skeleton } from './Skeleton'
 import { cn } from './cn'
 import { STATUS_COLOR_CLASSES } from './statusColors'
 
 /** Insignia del estado de una tarea, resuelto desde el catálogo del usuario. */
 export function StatusBadge({ statusId, className }: { statusId: string; className?: string }) {
   const status = useStatus(statusId)
-  if (!status) return null
+  const loaded = useStatusStore((state) => state.statuses !== null)
+  if (!status) return loaded ? null : <Skeleton className={cn('h-6 rounded-full', className)} />
   const colors = STATUS_COLOR_CLASSES[status.color]
   return (
     <span

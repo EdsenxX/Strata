@@ -28,7 +28,8 @@ import { Card } from '../components/ui/Card'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
-import { LoadingState } from '../components/ui/LoadingState'
+import { ProjectDetailSkeleton } from '../components/skeletons/ProjectDetailSkeleton'
+import { TaskRowsSkeleton } from '../components/skeletons/TaskRowsSkeleton'
 import { StatusBadge } from '../components/ui/StatusBadge'
 import { insetFieldClasses } from '../components/ui/TextField'
 import { cn } from '../components/ui/cn'
@@ -62,7 +63,7 @@ export function ProjectDetailPage() {
   const [renamingPhase, setRenamingPhase] = useState<PhaseDto | null>(null)
   const [deletingPhase, setDeletingPhase] = useState<PhaseDto | null>(null)
 
-  if (data.status === ASYNC_STATUS.LOADING) return <LoadingState />
+  if (data.status === ASYNC_STATUS.LOADING) return <ProjectDetailSkeleton />
   if (data.status === ASYNC_STATUS.ERROR)
     return <ErrorBanner message={data.error} onRetry={data.reload} />
 
@@ -365,7 +366,7 @@ function PhaseTasks({
         </div>
       )}
 
-      {tasks.status === ASYNC_STATUS.LOADING && <LoadingState />}
+      {tasks.status === ASYNC_STATUS.LOADING && <TaskRowsSkeleton />}
       {tasks.status === ASYNC_STATUS.ERROR && (
         <ErrorBanner message={tasks.error} onRetry={tasks.reload} />
       )}

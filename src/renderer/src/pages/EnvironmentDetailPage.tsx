@@ -23,7 +23,8 @@ import { cn } from '../components/ui/cn'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
-import { LoadingState } from '../components/ui/LoadingState'
+import { PageHeaderSkeleton } from '../components/skeletons/PageHeaderSkeleton'
+import { ProjectsTableSkeleton } from '../components/skeletons/ProjectsTableSkeleton'
 import { ProgressBar } from '../components/ui/ProgressBar'
 import { useAsyncData } from '../hooks/useAsyncData'
 import { formatDate } from '../utils/format'
@@ -86,7 +87,14 @@ export function EnvironmentDetailPage() {
     replaceProjects((projects) => projects.filter((item) => item.id !== deleting.id))
   }
 
-  if (data.status === ASYNC_STATUS.LOADING) return <LoadingState />
+  if (data.status === ASYNC_STATUS.LOADING) {
+    return (
+      <>
+        <PageHeaderSkeleton />
+        <ProjectsTableSkeleton />
+      </>
+    )
+  }
   if (data.status === ASYNC_STATUS.ERROR) {
     return <ErrorBanner message={data.error} onRetry={data.reload} />
   }

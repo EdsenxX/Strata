@@ -8,7 +8,6 @@ import { getDisplayName, getInitials } from '../../utils/format'
 import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../ui/Button'
 import { cn } from '../ui/cn'
 import { ErrorBanner } from '../ui/ErrorBanner'
-import { LoadingState } from '../ui/LoadingState'
 import { VersionBadge } from '../ui/VersionBadge'
 import { Logo } from './Logo'
 
@@ -20,7 +19,7 @@ const NAV_ITEMS = [
 
 /**
  * Estructura de la app autenticada: barra lateral + contenido.
- * Carga el catálogo de estados del usuario antes de mostrar las páginas que lo usan.
+ * Carga el catálogo de estados del usuario; mientras llega, StatusBadge y StatusSelector muestran skeletons.
  */
 export function AppShell() {
   const user = useAuthStore((state) => state.user)
@@ -33,12 +32,15 @@ export function AppShell() {
     void loadStatuses()
   }, [loadStatuses])
 
-  const content = statuses ? (
-    <Outlet />
-  ) : statusError ? (
-    <ErrorBanner message={statusError} onRetry={() => void loadStatuses()} />
-  ) : (
-    <LoadingState />
+  const content = (
+    <>
+      {!statuses && statusError && (
+        <div className="mb-6">
+          <ErrorBanner message={statusError} onRetry={() => void loadStatuses()} />
+        </div>
+      )}
+      <Outlet />
+    </>
   )
 
   return (

@@ -26,7 +26,7 @@ import { BUTTON_VARIANTS, Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { ConfirmDialog } from '../components/ui/ConfirmDialog'
 import { ErrorBanner } from '../components/ui/ErrorBanner'
-import { LoadingState } from '../components/ui/LoadingState'
+import { TaskDetailSkeleton } from '../components/skeletons/TaskDetailSkeleton'
 import { cn } from '../components/ui/cn'
 import { useAsyncData } from '../hooks/useAsyncData'
 import { useDebouncedSave } from '../hooks/useDebouncedSave'
@@ -91,7 +91,7 @@ export function TaskDetailPage() {
     }
   }
 
-  if (data.status === ASYNC_STATUS.LOADING) return <LoadingState />
+  if (data.status === ASYNC_STATUS.LOADING) return <TaskDetailSkeleton />
   if (data.status === ASYNC_STATUS.ERROR)
     return <ErrorBanner message={data.error} onRetry={data.reload} />
 
