@@ -40,7 +40,7 @@ solo consumen las utilidades de Tailwind generadas a partir de ellos.
 
 ### Tema claro / oscuro
 
-El usuario elige **Claro**, **Oscuro** o **Sistema** con `ThemeSwitcher` (barra lateral y pantallas de acceso).
+El usuario elige **Claro**, **Oscuro** o **Sistema** con `ThemeSwitcher` (página Configuración y pantallas de acceso).
 La elección se aplica en el proceso principal con `nativeTheme.themeSource`, que hace que Chromium cambie
 `prefers-color-scheme`. Por eso el CSS solo define los tokens oscuros bajo `@media (prefers-color-scheme: dark)`:
 no uses clases `dark:` ni atributos de tema en componentes; basta con consumir los tokens.
@@ -96,17 +96,18 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 | `ProgressBar`                                          | Pista hundida con relleno `success`.                                                                                                                   |
 | `EmptyState`, `LoadingState`, `ErrorBanner`, `Spinner` | Estados vacíos, de carga y de error.                                                                                                                   |
 | `VersionBadge`                                         | Versión de la app (`__APP_VERSION__`).                                                                                                                 |
-| `ThemeSwitcher`                                        | Selector de tema (claro, oscuro, sistema) con la opción activa hundida.                                                                                |
+| `ThemeSwitcher`                                        | Selector de tema con la opción activa hundida. Variantes `THEME_SWITCHER_VARIANTS`: `compact` (iconos) y `cards` (tarjetas con texto).                 |
+| `Toggle`                                               | Interruptor (`role="switch"`) con etiqueta y pista: pista hundida y perilla elevada que se vuelve de acento al activarse.                              |
 
 ### Composición
 
-| Carpeta   | Componentes                                                                                           |
-| --------- | ----------------------------------------------------------------------------------------------------- |
-| `layout`  | `AppShell` (barra lateral + contenido), `AuthLayout`, `PageHeader`, `Breadcrumbs`, `Logo`             |
-| `forms`   | `NameFormModal` (entornos y fases), `ProjectFormModal`, `StatusFormModal` (nombre, color y categoría) |
-| `tasks`   | `TimerButton`, `ElapsedTime`, `StatusSelector`, `ManualTimeModal`                                     |
-| `editor`  | `MarkdownEditor` (Milkdown Crepe adaptado en `styles/editor.css`)                                     |
-| `routing` | `ProtectedRoute`, `PublicOnlyRoute`                                                                   |
+| Carpeta   | Componentes                                                                                                                                       |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `layout`  | `AppShell` (barra lateral + contenido), `AuthLayout`, `PageHeader`, `Breadcrumbs`, `Logo`, `UpdateBanner` (aviso flotante de actualización lista) |
+| `forms`   | `NameFormModal` (entornos y fases), `ProjectFormModal`, `StatusFormModal` (nombre, color y categoría)                                             |
+| `tasks`   | `TimerButton`, `ElapsedTime`, `StatusSelector`, `ManualTimeModal`                                                                                 |
+| `editor`  | `MarkdownEditor` (Milkdown Crepe adaptado en `styles/editor.css`)                                                                                 |
+| `routing` | `ProtectedRoute`, `PublicOnlyRoute`                                                                                                               |
 
 ## Patrones
 

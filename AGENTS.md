@@ -58,7 +58,8 @@ src/
 │   ├── services/      # Lógica de negocio por dominio
 │   ├── ipc/           # Registro de canales IPC
 │   ├── session/       # Sesión en memoria + persistencia cifrada (safeStorage)
-│   ├── services/preferencesService.ts  # Preferencias locales (tema) en userData/preferences.json
+│   ├── services/preferencesService.ts  # Preferencias locales (tema, descarga automática) en userData/preferences.json
+│   ├── services/updaterService.ts      # Actualizaciones automáticas (electron-updater)
 │   └── utils/         # Validaciones defensivas de entrada
 ├── preload/           # Puente seguro: expone window.strata
 └── renderer/          # Interfaz React
@@ -124,18 +125,19 @@ src/
 
 Ninguna cadena o número con significado de negocio va suelto en el código:
 
-| Necesitas…              | Usa                                                                             |
-| ----------------------- | ------------------------------------------------------------------------------- |
-| Texto visible           | `src/shared/constants/texts.ts` (`*_TEXTS`, `ERROR_MESSAGES`, etiquetas)        |
-| Estados de tarea        | `STATUS_CATEGORIES`, `STATUS_COLORS`, `DEFAULT_TASK_STATUSES` (`taskStatus.ts`) |
-| Canales IPC             | `IPC_CHANNELS` (`ipcChannels.ts`)                                               |
-| Rutas                   | `ROUTES`, `buildRoute`, `QUERY_PARAMS` (`routes.ts`)                            |
-| Límites y regex         | `FIELD_LIMITS`, `PATTERNS`, `PASSWORD_POLICY` (`validation.ts`)                 |
-| Colecciones/modelos/env | `MODEL_NAMES`, `COLLECTION_NAMES`, `ENV_KEYS` (`database.ts`)                   |
-| Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                                 |
-| Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)                   |
-| Tema y preferencias     | `THEME_MODES`, `THEME_MODE_VALUES`, `PREFERENCES_FILE_NAME` (`preferences.ts`)  |
-| Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)           |
+| Necesitas…              | Usa                                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| Texto visible           | `src/shared/constants/texts.ts` (`*_TEXTS`, `ERROR_MESSAGES`, etiquetas)                         |
+| Estados de tarea        | `STATUS_CATEGORIES`, `STATUS_COLORS`, `DEFAULT_TASK_STATUSES` (`taskStatus.ts`)                  |
+| Canales IPC             | `IPC_CHANNELS` (`ipcChannels.ts`)                                                                |
+| Rutas                   | `ROUTES`, `buildRoute`, `QUERY_PARAMS` (`routes.ts`)                                             |
+| Límites y regex         | `FIELD_LIMITS`, `PATTERNS`, `PASSWORD_POLICY` (`validation.ts`)                                  |
+| Colecciones/modelos/env | `MODEL_NAMES`, `COLLECTION_NAMES`, `ENV_KEYS` (`database.ts`)                                    |
+| Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                                                  |
+| Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)                                    |
+| Tema y preferencias     | `THEME_MODES`, `THEME_MODE_VALUES`, `PREFERENCES_FILE_NAME` (`preferences.ts`)                   |
+| Actualizaciones         | `UPDATE_STATUS`, `UPDATE_SCHEDULE`, `DEFAULT_AUTO_DOWNLOAD_UPDATES` (`updates.ts`), `IPC_EVENTS` |
+| Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)                            |
 
 - Importa desde `@shared/constants` (barril `index.ts`).
 - Si un dominio nuevo necesita constantes, crea un archivo nuevo en `src/shared/constants/` y expórtalo en `index.ts`.
@@ -158,10 +160,27 @@ Ninguna cadena o número con significado de negocio va suelto en el código:
 5. Textos nuevos en `texts.ts`.
 6. Consumo en la interfaz con `unwrap(api.…)`.
 
+## Actualizaciones automáticas
+
+- `updaterService.ts` usa **electron-updater** con el proveedor `github` de `electron-builder.yml` (`publish`), que
+  genera `resources/app-update.yml`. Requiere que el repositorio **sea público**.
+- Solo funciona en la app instalada: Windows (NSIS), `.deb` (instala con `pkexec dpkg -i`, pide contraseña) y
+  AppImage. En desarrollo el estado es `unsupported`.
+- Busca a los 10 s de abrir y cada 6 h (`UPDATE_SCHEDULE`). Con "descargar automáticamente" activo descarga en
+  segundo plano; se instala con **Reiniciar e instalar** (`quitAndInstall`) o al cerrar la app.
+- El estado se difunde a la interfaz con `IPC_EVENTS.UPDATES_STATE_CHANGED`; `updateStore` lo refleja en
+  Configuración y en `UpdateBanner`.
+- La release debe incluir `latest.yml`, `latest-linux.yml` y `Strata-Setup-x64.exe.blockmap` además de los
+  instaladores (el workflow ya los sube). Sin ellos la app no detecta versiones nuevas.
+- **Probar sin publicar**: compila otra versión con
+  `npx electron-builder --linux deb --publish never -c.extraMetadata.version=9.9.9 -c.directories.output=<dir>`,
+  sirve `<dir>` por HTTP, copia `dist/linux-unpacked` y cambia su `resources/app-update.yml` a
+  `provider: generic` + `url: http://127.0.0.1:<puerto>/`.
+
 ## Versionado
 
 - Formato **SemVer `MAJOR.MINOR.PATCH`** (`0.0.0`). Fuente única: `version` de `package.json`.
-- La interfaz muestra la versión siempre (barra lateral y pantallas de acceso) vía `__APP_VERSION__`.
+- La interfaz muestra la versión siempre (barra lateral, pantallas de acceso y Configuración) vía `__APP_VERSION__`.
 - Cada release: commit `chore(release): vX.Y.Z` + etiqueta anotada `vX.Y.Z` + entrada en `CHANGELOG.md`.
 - Usa la skill [`versioning`](.agents/skills/versioning/SKILL.md); nunca edites la versión a mano.
 - Subir una etiqueta `vX.Y.Z` dispara [`.github/workflows/release.yml`](.github/workflows/release.yml): compila en

@@ -7,6 +7,17 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Agregado
+
+- Página **Configuración** con dos secciones: apariencia (tema claro, oscuro o del sistema) y actualizaciones.
+- Actualizaciones automáticas desde GitHub Releases: búsqueda al abrir y cada 6 horas, opción para descargarlas en
+  automático, botón **Buscar actualizaciones** y aviso **Reiniciar e instalar** cuando hay una versión lista.
+
+### Cambiado
+
+- El selector de tema se movió de la barra lateral a Configuración (sigue en las pantallas de acceso).
+- Las releases publican también `latest.yml`, `latest-linux.yml` y el `.blockmap` que usa el actualizador.
+
 ## [0.3.1] - 2026-11-11
 
 ### Cambiado

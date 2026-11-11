@@ -27,6 +27,9 @@ El nombre viene de _strata_ (estratos): cada nivel es una capa que envuelve a la
   - Estados: Pendiente, En progreso, En pausa, Completada.
   - Tiempo invertido con cronómetro (iniciar/pausar, sobrevive a cierres de la app) o captura manual.
 - **Diseño neumórfico** con tema claro, oscuro o el del sistema (a elección, se recuerda por equipo) y fuentes locales (Plus Jakarta Sans, JetBrains Mono).
+- **Configuración**: tema claro, oscuro o del sistema, y actualizaciones.
+- **Actualizaciones automáticas**: busca versiones nuevas al abrir y cada pocas horas; se pueden descargar en
+  automático o a mano e instalar con un clic (**Reiniciar e instalar**).
 - **Versión visible** siempre en la interfaz.
 
 ## Descargas
