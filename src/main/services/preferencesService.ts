@@ -1,5 +1,6 @@
 /**
- * Preferencias locales (por equipo) guardadas en un JSON dentro de `userData`.
+ * Preferencias locales (por equipo) guardadas en un JSON dentro de `userData`:
+ * tema y descarga automática de actualizaciones.
  *
  * El tema se aplica con `nativeTheme.themeSource`: Chromium ajusta entonces
  * `prefers-color-scheme`, así que el CSS, las barras de scroll y los diálogos nativos
@@ -9,6 +10,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app, nativeTheme } from 'electron'
 import {
+  DEFAULT_AUTO_DOWNLOAD_UPDATES,
   DEFAULT_THEME_MODE,
   ERROR_CODES,
   PREFERENCES_FILE_NAME,
@@ -16,12 +18,17 @@ import {
   type ThemeMode
 } from '@shared/constants'
 import { AppError } from '../errors/AppError'
+import { setAutoDownload } from './updaterService'
 
 interface Preferences {
   themeMode: ThemeMode
+  autoDownloadUpdates: boolean
 }
 
-const DEFAULT_PREFERENCES: Preferences = { themeMode: DEFAULT_THEME_MODE }
+const DEFAULT_PREFERENCES: Preferences = {
+  themeMode: DEFAULT_THEME_MODE,
+  autoDownloadUpdates: DEFAULT_AUTO_DOWNLOAD_UPDATES
+}
 
 const preferencesFilePath = (): string => join(app.getPath('userData'), PREFERENCES_FILE_NAME)
 
@@ -34,7 +41,11 @@ async function readPreferences(): Promise<Preferences> {
       await readFile(preferencesFilePath(), 'utf-8')
     ) as Partial<Preferences>
     return {
-      themeMode: isThemeMode(stored.themeMode) ? stored.themeMode : DEFAULT_THEME_MODE
+      themeMode: isThemeMode(stored.themeMode) ? stored.themeMode : DEFAULT_THEME_MODE,
+      autoDownloadUpdates:
+        typeof stored.autoDownloadUpdates === 'boolean'
+          ? stored.autoDownloadUpdates
+          : DEFAULT_AUTO_DOWNLOAD_UPDATES
     }
   } catch {
     // Archivo inexistente o corrupto: se usan los valores por defecto.
@@ -59,5 +70,16 @@ export async function setThemeMode(raw: unknown): Promise<ThemeMode> {
   if (!isThemeMode(raw)) throw new AppError(ERROR_CODES.VALIDATION_FAILED)
   nativeTheme.themeSource = raw
   await writePreferences({ ...(await readPreferences()), themeMode: raw })
+  return raw
+}
+
+export async function getAutoDownloadUpdates(): Promise<boolean> {
+  return (await readPreferences()).autoDownloadUpdates
+}
+
+export async function setAutoDownloadUpdates(raw: unknown): Promise<boolean> {
+  if (typeof raw !== 'boolean') throw new AppError(ERROR_CODES.VALIDATION_FAILED)
+  await writePreferences({ ...(await readPreferences()), autoDownloadUpdates: raw })
+  setAutoDownload(raw)
   return raw
 }

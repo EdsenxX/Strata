@@ -9,16 +9,36 @@ const THEME_ICONS: Record<ThemeMode, LucideIcon> = {
   [THEME_MODES.SYSTEM]: Monitor
 }
 
+/** Variantes: iconos compactos (pantallas de acceso) o tarjetas con texto (Configuración). */
+export const THEME_SWITCHER_VARIANTS = {
+  COMPACT: 'compact',
+  CARDS: 'cards'
+} as const
+
+type ThemeSwitcherVariant = (typeof THEME_SWITCHER_VARIANTS)[keyof typeof THEME_SWITCHER_VARIANTS]
+
+interface ThemeSwitcherProps {
+  variant?: ThemeSwitcherVariant
+  className?: string
+}
+
 /** Selector de tema: claro, oscuro o el del sistema. La opción activa queda hundida. */
-export function ThemeSwitcher({ className }: { className?: string }) {
+export function ThemeSwitcher({
+  variant = THEME_SWITCHER_VARIANTS.COMPACT,
+  className
+}: ThemeSwitcherProps) {
   const mode = useThemeStore((state) => state.mode)
   const setMode = useThemeStore((state) => state.setMode)
+  const cards = variant === THEME_SWITCHER_VARIANTS.CARDS
 
   return (
     <div
       role="radiogroup"
       aria-label={THEME_TEXTS.LABEL}
-      className={cn('inline-flex gap-1 rounded-full p-1 shadow-neu-sm', className)}
+      className={cn(
+        cards ? 'grid grid-cols-3 gap-4' : 'inline-flex gap-1 rounded-full p-1 shadow-neu-sm',
+        className
+      )}
     >
       {THEME_MODE_VALUES.map((option) => {
         const Icon = THEME_ICONS[option]
@@ -33,11 +53,17 @@ export function ThemeSwitcher({ className }: { className?: string }) {
             title={THEME_TEXTS[option]}
             onClick={() => !active && void setMode(option)}
             className={cn(
-              'flex size-8 cursor-pointer items-center justify-center rounded-full transition-all',
-              active ? 'text-accent shadow-neu-inset-sm' : 'text-muted hover:text-ink'
+              'flex cursor-pointer items-center justify-center transition-all',
+              cards
+                ? 'flex-col gap-2 rounded-neu-sm px-4 py-5 text-sm font-semibold'
+                : 'size-8 rounded-full',
+              active
+                ? cn('text-accent', cards ? 'shadow-neu-inset' : 'shadow-neu-inset-sm')
+                : cn('text-muted hover:text-ink', cards && 'shadow-neu-sm hover:shadow-neu')
             )}
           >
-            <Icon className="size-4" />
+            <Icon className={cards ? 'size-5' : 'size-4'} />
+            {cards && THEME_TEXTS[option]}
           </button>
         )
       })}

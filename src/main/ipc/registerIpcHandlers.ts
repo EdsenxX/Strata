@@ -17,6 +17,7 @@ import * as phaseService from '../services/phaseService'
 import * as preferencesService from '../services/preferencesService'
 import * as projectService from '../services/projectService'
 import * as statusService from '../services/statusService'
+import * as updaterService from '../services/updaterService'
 import * as taskService from '../services/taskService'
 
 type Handler<T> = (input: unknown) => Promise<T>
@@ -91,4 +92,19 @@ export function registerIpcHandlers(): void {
   const local = { requiresDatabase: false }
   handle(IPC_CHANNELS.PREFERENCES_GET_THEME, preferencesService.getThemeMode, local)
   handle(IPC_CHANNELS.PREFERENCES_SET_THEME, preferencesService.setThemeMode, local)
+  handle(
+    IPC_CHANNELS.PREFERENCES_GET_AUTO_DOWNLOAD_UPDATES,
+    preferencesService.getAutoDownloadUpdates,
+    local
+  )
+  handle(
+    IPC_CHANNELS.PREFERENCES_SET_AUTO_DOWNLOAD_UPDATES,
+    preferencesService.setAutoDownloadUpdates,
+    local
+  )
+
+  handle(IPC_CHANNELS.UPDATES_GET_STATE, updaterService.getUpdateState, local)
+  handle(IPC_CHANNELS.UPDATES_CHECK, updaterService.checkForUpdates, local)
+  handle(IPC_CHANNELS.UPDATES_DOWNLOAD, updaterService.downloadUpdate, local)
+  handle(IPC_CHANNELS.UPDATES_INSTALL, updaterService.installUpdate, local)
 }

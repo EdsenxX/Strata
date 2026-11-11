@@ -3,6 +3,7 @@
  */
 import type { ErrorCode } from '../constants/errorCodes'
 import type { ThemeMode } from '../constants/preferences'
+import type { UpdateStatus } from '../constants/updates'
 import type {
   EnvironmentDto,
   PhaseDto,
@@ -28,6 +29,18 @@ import type {
   UpdateStatusInput,
   UpdateTaskInput
 } from './inputs'
+
+/** Estado del ciclo de actualización (ver UPDATE_STATUS). */
+export interface UpdateState {
+  status: UpdateStatus
+  currentVersion: string
+  /** Versión nueva encontrada (si la hay). */
+  availableVersion: string | null
+  /** Porcentaje de descarga (0–100). */
+  progress: number
+  /** Fecha ISO de la última búsqueda terminada. */
+  lastCheckedAt: string | null
+}
 
 /** Resultado de toda llamada IPC: nunca se lanzan excepciones a través del puente. */
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: ErrorCode }
@@ -82,5 +95,15 @@ export interface StrataApi {
   preferences: {
     getTheme: CallWithoutInput<ThemeMode>
     setTheme: Call<ThemeMode, ThemeMode>
+    getAutoDownloadUpdates: CallWithoutInput<boolean>
+    setAutoDownloadUpdates: Call<boolean, boolean>
+  }
+  updates: {
+    getState: CallWithoutInput<UpdateState>
+    check: CallWithoutInput<UpdateState>
+    download: CallWithoutInput<UpdateState>
+    install: CallWithoutInput<null>
+    /** Se suscribe a los cambios de estado; devuelve la función para desuscribirse. */
+    onStateChange: (listener: (state: UpdateState) => void) => () => void
   }
 }

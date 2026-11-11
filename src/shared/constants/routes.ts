@@ -18,6 +18,7 @@ export const ROUTES = {
   REGISTER: '/register',
   ENVIRONMENTS: '/environments',
   STATUSES: '/statuses',
+  SETTINGS: '/settings',
   ENVIRONMENT: `/environments/:${ROUTE_PARAMS.ENVIRONMENT_ID}`,
   PROJECT: `/environments/:${ROUTE_PARAMS.ENVIRONMENT_ID}/projects/:${ROUTE_PARAMS.PROJECT_ID}`,
   TASK: `/environments/:${ROUTE_PARAMS.ENVIRONMENT_ID}/projects/:${ROUTE_PARAMS.PROJECT_ID}/tasks/:${ROUTE_PARAMS.TASK_ID}`

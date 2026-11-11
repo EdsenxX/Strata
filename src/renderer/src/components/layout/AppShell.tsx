@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router'
-import { FolderTree, ListChecks, LogOut } from 'lucide-react'
+import { FolderTree, ListChecks, LogOut, Settings } from 'lucide-react'
 import { AUTH_TEXTS, NAV_TEXTS, ROUTES } from '@shared/constants'
 import { useAuthStore } from '../../stores/authStore'
 import { useStatusStore } from '../../stores/statusStore'
@@ -9,13 +9,13 @@ import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../ui/Button'
 import { cn } from '../ui/cn'
 import { ErrorBanner } from '../ui/ErrorBanner'
 import { LoadingState } from '../ui/LoadingState'
-import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { VersionBadge } from '../ui/VersionBadge'
 import { Logo } from './Logo'
 
 const NAV_ITEMS = [
   { to: ROUTES.ENVIRONMENTS, label: NAV_TEXTS.ENVIRONMENTS, Icon: FolderTree },
-  { to: ROUTES.STATUSES, label: NAV_TEXTS.STATUSES, Icon: ListChecks }
+  { to: ROUTES.STATUSES, label: NAV_TEXTS.STATUSES, Icon: ListChecks },
+  { to: ROUTES.SETTINGS, label: NAV_TEXTS.SETTINGS, Icon: Settings }
 ]
 
 /**
@@ -86,10 +86,7 @@ export function AppShell() {
               />
             </div>
           )}
-          <div className="flex items-center justify-between gap-3">
-            <ThemeSwitcher />
-            <VersionBadge />
-          </div>
+          <VersionBadge className="self-start" />
         </div>
       </aside>
 

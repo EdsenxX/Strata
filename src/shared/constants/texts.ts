@@ -6,6 +6,7 @@ import { APP_NAME } from './app'
 import { ENV_FILE_NAME, ENV_KEYS } from './database'
 import { ERROR_CODES, type ErrorCode } from './errorCodes'
 import { THEME_MODES } from './preferences'
+import { UPDATE_STATUS, type UpdateStatus } from './updates'
 import {
   STATUS_CATEGORIES,
   STATUS_COLORS,
@@ -114,6 +115,7 @@ export const THEME_TEXTS = {
 export const NAV_TEXTS = {
   ENVIRONMENTS: 'Entornos',
   STATUSES: 'Estados',
+  SETTINGS: 'Configuración',
   BREADCRUMB_LABEL: 'Ruta de navegación'
 } as const
 
@@ -270,4 +272,44 @@ export const EDITOR_TEXTS = {
   CODE_SEARCH_PLACEHOLDER: 'Buscar lenguaje',
   CODE_NO_RESULTS: 'Sin resultados',
   CODE_COPY: 'Copiar'
+} as const
+
+export const SETTINGS_TEXTS = {
+  PAGE_TITLE: 'Configuración',
+  PAGE_SUBTITLE: 'Preferencias de este equipo.',
+  APPEARANCE_TITLE: 'Apariencia',
+  APPEARANCE_DESCRIPTION:
+    'Elige cómo se ve Strata. "Sistema" sigue la configuración de tu sistema operativo.',
+  UPDATES_TITLE: 'Actualizaciones',
+  UPDATES_DESCRIPTION: 'Strata busca versiones nuevas al abrirse y cada pocas horas.',
+  CURRENT_VERSION: 'Versión instalada',
+  AUTO_DOWNLOAD_LABEL: 'Descargar actualizaciones automáticamente',
+  AUTO_DOWNLOAD_HINT:
+    'Las versiones nuevas se descargan en segundo plano y se instalan al reiniciar o cerrar la app.',
+  CHECK_NOW: 'Buscar actualizaciones',
+  DOWNLOAD: 'Descargar',
+  RESTART_AND_INSTALL: 'Reiniciar e instalar',
+  LATER: 'Más tarde',
+  LAST_CHECKED: 'Última búsqueda'
+} as const
+
+/** Descripción de cada estado de actualización. */
+export const UPDATE_STATUS_TEXTS: Record<UpdateStatus, (version: string | null) => string> = {
+  [UPDATE_STATUS.IDLE]: () => 'Aún no se han buscado actualizaciones.',
+  [UPDATE_STATUS.UNSUPPORTED]: () =>
+    'Las actualizaciones solo funcionan en la app instalada (no en modo desarrollo).',
+  [UPDATE_STATUS.CHECKING]: () => 'Buscando actualizaciones…',
+  [UPDATE_STATUS.UP_TO_DATE]: () => 'Tienes la versión más reciente.',
+  [UPDATE_STATUS.AVAILABLE]: (version) => `Hay una versión nueva disponible: v${version}.`,
+  [UPDATE_STATUS.DOWNLOADING]: (version) => `Descargando v${version}…`,
+  [UPDATE_STATUS.DOWNLOADED]: (version) =>
+    `La versión v${version} está lista. Reinicia Strata para instalarla.`,
+  [UPDATE_STATUS.ERROR]: () =>
+    'No se pudo completar la actualización. Revisa tu conexión e inténtalo de nuevo.'
+}
+
+/** Aviso flotante cuando una actualización ya se descargó. */
+export const UPDATE_BANNER_TEXTS = {
+  TITLE: (version: string): string => `Strata v${version} está lista`,
+  BODY: 'Reinicia para instalar la nueva versión.'
 } as const

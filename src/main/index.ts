@@ -11,7 +11,8 @@ import {
   ensureDatabaseConnection
 } from './database/connection'
 import { registerIpcHandlers } from './ipc/registerIpcHandlers'
-import { applyStoredThemeMode } from './services/preferencesService'
+import { applyStoredThemeMode, getAutoDownloadUpdates } from './services/preferencesService'
+import { initializeUpdater } from './services/updaterService'
 
 /** URL del servidor de desarrollo que inyecta electron-vite. */
 const DEV_SERVER_URL_KEY = 'ELECTRON_RENDERER_URL'
@@ -126,6 +127,7 @@ async function bootstrap(): Promise<void> {
     console.error('[database] initial connection failed', error)
   )
   createMainWindow()
+  initializeUpdater(await getAutoDownloadUpdates())
 }
 
 app.setAppUserModelId(APP_ID)

@@ -10,6 +10,13 @@ files:
   - package.json
   - '!**/.env'
 asar: true
+# Origen de las actualizaciones automáticas (electron-updater). Genera resources/app-update.yml.
+# La publicación la hace el workflow de release, por eso los scripts usan --publish never.
+publish:
+  provider: github
+  owner: EdsenxX
+  repo: Strata
+  releaseType: release
 win:
   target:
     - target: nsis

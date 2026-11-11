@@ -8,10 +8,13 @@ import { EnvironmentsPage } from './pages/EnvironmentsPage'
 import { LoginPage } from './pages/LoginPage'
 import { ProjectDetailPage } from './pages/ProjectDetailPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { SettingsPage } from './pages/SettingsPage'
 import { StatusesPage } from './pages/StatusesPage'
 import { TaskDetailPage } from './pages/TaskDetailPage'
 import { useAuthStore } from './stores/authStore'
 import { useThemeStore } from './stores/themeStore'
+import { useUpdateStore } from './stores/updateStore'
+import { UpdateBanner } from './components/layout/UpdateBanner'
 
 /**
  * Raíz de la interfaz. Se usa HashRouter porque en producción la app se carga
@@ -20,11 +23,13 @@ import { useThemeStore } from './stores/themeStore'
 export function App() {
   const bootstrap = useAuthStore((state) => state.bootstrap)
   const loadTheme = useThemeStore((state) => state.load)
+  const initUpdates = useUpdateStore((state) => state.init)
 
   useEffect(() => {
     void bootstrap()
     void loadTheme()
-  }, [bootstrap, loadTheme])
+    void initUpdates()
+  }, [bootstrap, loadTheme, initUpdates])
 
   return (
     <HashRouter>
@@ -40,10 +45,12 @@ export function App() {
             <Route path={ROUTES.PROJECT} element={<ProjectDetailPage />} />
             <Route path={ROUTES.TASK} element={<TaskDetailPage />} />
             <Route path={ROUTES.STATUSES} element={<StatusesPage />} />
+            <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to={ROUTES.ENVIRONMENTS} replace />} />
       </Routes>
+      <UpdateBanner />
     </HashRouter>
   )
 }

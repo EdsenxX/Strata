@@ -41,10 +41,22 @@ export const IPC_CHANNELS = {
   STATUSES_REORDER: 'statuses:reorder',
 
   PREFERENCES_GET_THEME: 'preferences:get-theme',
-  PREFERENCES_SET_THEME: 'preferences:set-theme'
+  PREFERENCES_SET_THEME: 'preferences:set-theme',
+  PREFERENCES_GET_AUTO_DOWNLOAD_UPDATES: 'preferences:get-auto-download-updates',
+  PREFERENCES_SET_AUTO_DOWNLOAD_UPDATES: 'preferences:set-auto-download-updates',
+
+  UPDATES_GET_STATE: 'updates:get-state',
+  UPDATES_CHECK: 'updates:check',
+  UPDATES_DOWNLOAD: 'updates:download',
+  UPDATES_INSTALL: 'updates:install'
 } as const
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS]
+
+/** Eventos que el proceso principal envía a la interfaz (sin respuesta). */
+export const IPC_EVENTS = {
+  UPDATES_STATE_CHANGED: 'updates:state-changed'
+} as const
 
 /** Nombre del objeto que el preload expone en `window`. */
 export const PRELOAD_API_KEY = 'strata'

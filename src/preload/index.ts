@@ -3,8 +3,8 @@
  * La interfaz nunca accede a Node ni a ipcRenderer directamente.
  */
 import { contextBridge, ipcRenderer } from 'electron'
-import { IPC_CHANNELS, PRELOAD_API_KEY, type IpcChannel } from '@shared/constants'
-import type { StrataApi } from '@shared/types'
+import { IPC_CHANNELS, IPC_EVENTS, PRELOAD_API_KEY, type IpcChannel } from '@shared/constants'
+import type { StrataApi, UpdateState } from '@shared/types'
 
 const invoke =
   (channel: IpcChannel) =>
@@ -57,7 +57,20 @@ const api: StrataApi = {
   },
   preferences: {
     getTheme: invoke(IPC_CHANNELS.PREFERENCES_GET_THEME),
-    setTheme: invoke(IPC_CHANNELS.PREFERENCES_SET_THEME)
+    setTheme: invoke(IPC_CHANNELS.PREFERENCES_SET_THEME),
+    getAutoDownloadUpdates: invoke(IPC_CHANNELS.PREFERENCES_GET_AUTO_DOWNLOAD_UPDATES),
+    setAutoDownloadUpdates: invoke(IPC_CHANNELS.PREFERENCES_SET_AUTO_DOWNLOAD_UPDATES)
+  },
+  updates: {
+    getState: invoke(IPC_CHANNELS.UPDATES_GET_STATE),
+    check: invoke(IPC_CHANNELS.UPDATES_CHECK),
+    download: invoke(IPC_CHANNELS.UPDATES_DOWNLOAD),
+    install: invoke(IPC_CHANNELS.UPDATES_INSTALL),
+    onStateChange: (listener) => {
+      const handler = (_event: Electron.IpcRendererEvent, state: UpdateState) => listener(state)
+      ipcRenderer.on(IPC_EVENTS.UPDATES_STATE_CHANGED, handler)
+      return () => ipcRenderer.removeListener(IPC_EVENTS.UPDATES_STATE_CHANGED, handler)
+    }
   }
 }
 
