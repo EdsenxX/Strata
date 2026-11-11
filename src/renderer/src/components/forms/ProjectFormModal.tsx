@@ -71,7 +71,10 @@ function ProjectForm({
         autoFocus
         required
         error={nameError}
-        onChange={(event) => setValues((current) => ({ ...current, name: event.target.value }))}
+        onChange={(event) => {
+          setValues((current) => ({ ...current, name: event.target.value }))
+          setNameError(undefined)
+        }}
       />
       <TextArea
         label={PROJECT_TEXTS.DESCRIPTION_LABEL}

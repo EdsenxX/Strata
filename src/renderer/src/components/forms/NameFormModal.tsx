@@ -70,7 +70,10 @@ function NameForm({
         autoFocus
         required
         error={fieldError}
-        onChange={(event) => setName(event.target.value)}
+        onChange={(event) => {
+          setName(event.target.value)
+          setFieldError(undefined)
+        }}
       />
       <RequiredFieldsNote />
       {error && <ErrorBanner message={error} />}
