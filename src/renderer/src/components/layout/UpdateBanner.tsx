@@ -1,5 +1,11 @@
 import { RotateCcw, Sparkles } from 'lucide-react'
-import { PLATFORMS, SETTINGS_TEXTS, UPDATE_BANNER_TEXTS, UPDATE_STATUS } from '@shared/constants'
+import {
+  PLATFORMS,
+  SETTINGS_TEXTS,
+  UPDATE_BANNER_TEXTS,
+  UPDATE_INSTALL_FAILED_TEXT,
+  UPDATE_STATUS
+} from '@shared/constants'
 import { api } from '../../api/client'
 import { useUpdateStore } from '../../stores/updateStore'
 import { BUTTON_SIZES, BUTTON_VARIANTS, Button } from '../ui/Button'
@@ -10,7 +16,12 @@ export function UpdateBanner() {
   const dismissed = useUpdateStore((state) => state.bannerDismissed)
   const { install, dismissBanner } = useUpdateStore.getState()
 
-  if (!update || update.status !== UPDATE_STATUS.DOWNLOADED || dismissed) return null
+  const visible =
+    update &&
+    !update.startupInstall &&
+    !dismissed &&
+    (update.status === UPDATE_STATUS.DOWNLOADED || update.status === UPDATE_STATUS.INSTALLING)
+  if (!visible) return null
 
   return (
     <div
@@ -25,7 +36,14 @@ export function UpdateBanner() {
           <p className="text-sm font-bold">
             {UPDATE_BANNER_TEXTS.TITLE(update.availableVersion ?? '')}
           </p>
-          <p className="text-xs text-muted">{UPDATE_BANNER_TEXTS.BODY}</p>
+          {/* Si la instalación falló se muestra solo el motivo, para no saturar el aviso. */}
+          {update.installFailed ? (
+            <p role="alert" className="text-xs font-semibold text-danger">
+              {UPDATE_INSTALL_FAILED_TEXT}
+            </p>
+          ) : (
+            <p className="text-xs text-muted">{UPDATE_BANNER_TEXTS.BODY}</p>
+          )}
           {api.platform === PLATFORMS.LINUX && (
             <p className="text-xs text-muted">{UPDATE_BANNER_TEXTS.LINUX_PASSWORD_NOTE}</p>
           )}
@@ -39,6 +57,7 @@ export function UpdateBanner() {
           size={BUTTON_SIZES.SM}
           variant={BUTTON_VARIANTS.PRIMARY}
           icon={<RotateCcw className="size-4" />}
+          loading={update.status === UPDATE_STATUS.INSTALLING}
           onClick={() => void install()}
         >
           {SETTINGS_TEXTS.RESTART_AND_INSTALL}

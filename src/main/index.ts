@@ -18,7 +18,11 @@ import {
 } from './database/connection'
 import { registerIpcHandlers } from './ipc/registerIpcHandlers'
 import { handleMediaRequest } from './services/imageService'
-import { applyStoredThemeMode, getAutoDownloadUpdates } from './services/preferencesService'
+import {
+  applyStoredThemeMode,
+  getAutoDownloadUpdates,
+  getInstallOnStartup
+} from './services/preferencesService'
 import { initializeUpdater } from './services/updaterService'
 
 /** URL del servidor de desarrollo que inyecta electron-vite. */
@@ -135,7 +139,10 @@ async function bootstrap(): Promise<void> {
     console.error('[database] initial connection failed', error)
   )
   createMainWindow()
-  initializeUpdater(await getAutoDownloadUpdates())
+  initializeUpdater({
+    autoDownload: await getAutoDownloadUpdates(),
+    installOnStartup: await getInstallOnStartup()
+  })
 }
 
 // El protocolo de imágenes debe declararse antes de que la app esté lista.

@@ -302,6 +302,9 @@ export const SETTINGS_TEXTS = {
   DOWNLOAD: 'Descargar',
   RESTART_AND_INSTALL: 'Actualizar ahora',
   LATER: 'Más tarde',
+  INSTALL_ON_STARTUP_LABEL: 'Actualizar al iniciar',
+  INSTALL_ON_STARTUP_HINT:
+    'Al abrir Strata, si hay una versión nueva, se descarga e instala antes de empezar. Puedes omitirlo en ese momento.',
   LAST_CHECKED: 'Última búsqueda'
 } as const
 
@@ -316,9 +319,25 @@ export const UPDATE_STATUS_TEXTS: Record<UpdateStatus, (version: string | null) 
   [UPDATE_STATUS.DOWNLOADING]: (version) => `Descargando v${version}…`,
   [UPDATE_STATUS.DOWNLOADED]: (version) =>
     `La versión v${version} está lista. Al actualizar, solo Strata se cierra y se vuelve a abrir.`,
+  [UPDATE_STATUS.INSTALLING]: (version) =>
+    `Instalando v${version}… Strata se cerrará y volverá a abrirse sola.`,
   [UPDATE_STATUS.ERROR]: () =>
-    'No se pudo completar la actualización. Revisa tu conexión e inténtalo de nuevo.'
+    'No se pudo buscar o descargar la actualización. Revisa tu conexión e inténtalo de nuevo.'
 }
+
+/** Mensaje cuando la descarga terminó pero la instalación falló (sigue lista para reintentar). */
+export const UPDATE_INSTALL_FAILED_TEXT =
+  'No se pudo instalar. Si cancelaste o cerraste la ventana de contraseña, vuelve a intentarlo; también se instalará cuando cierres Strata.'
+
+/** Pantalla de "actualizar al iniciar". */
+export const STARTUP_UPDATE_TEXTS = {
+  TITLE: 'Actualizando Strata',
+  CHECKING: 'Buscando actualizaciones…',
+  DOWNLOADING: (version: string): string => `Descargando la versión v${version}…`,
+  INSTALLING: (version: string): string =>
+    `Instalando v${version}. Strata se cerrará y volverá a abrirse sola.`,
+  SKIP: 'Omitir por ahora'
+} as const
 
 /** Aviso flotante cuando una actualización ya se descargó. */
 export const UPDATE_BANNER_TEXTS = {

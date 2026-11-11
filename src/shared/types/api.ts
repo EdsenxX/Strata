@@ -41,6 +41,10 @@ export interface UpdateState {
   progress: number
   /** Fecha ISO de la última búsqueda terminada. */
   lastCheckedAt: string | null
+  /** Hay una actualización al iniciar en curso: la interfaz muestra la pantalla de actualización. */
+  startupInstall: boolean
+  /** La última instalación falló; la versión descargada sigue lista para reintentar. */
+  installFailed: boolean
 }
 
 /** Resultado de toda llamada IPC: nunca se lanzan excepciones a través del puente. */
@@ -104,12 +108,16 @@ export interface StrataApi {
     setTheme: Call<ThemeMode, ThemeMode>
     getAutoDownloadUpdates: CallWithoutInput<boolean>
     setAutoDownloadUpdates: Call<boolean, boolean>
+    getInstallOnStartup: CallWithoutInput<boolean>
+    setInstallOnStartup: Call<boolean, boolean>
   }
   updates: {
     getState: CallWithoutInput<UpdateState>
     check: CallWithoutInput<UpdateState>
     download: CallWithoutInput<UpdateState>
     install: CallWithoutInput<null>
+    /** Omite la actualización al iniciar; la descarga sigue en segundo plano. */
+    skipStartup: CallWithoutInput<UpdateState>
     /** Se suscribe a los cambios de estado; devuelve la función para desuscribirse. */
     onStateChange: (listener: (state: UpdateState) => void) => () => void
   }

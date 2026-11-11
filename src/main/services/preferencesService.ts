@@ -1,6 +1,6 @@
 /**
  * Preferencias locales (por equipo) guardadas en un JSON dentro de `userData`:
- * tema y descarga automática de actualizaciones.
+ * tema, descarga automática de actualizaciones y actualización al iniciar.
  *
  * El tema se aplica con `nativeTheme.themeSource`: Chromium ajusta entonces
  * `prefers-color-scheme`, así que el CSS, las barras de scroll y los diálogos nativos
@@ -11,6 +11,7 @@ import { join } from 'node:path'
 import { app, nativeTheme } from 'electron'
 import {
   DEFAULT_AUTO_DOWNLOAD_UPDATES,
+  DEFAULT_INSTALL_UPDATES_ON_STARTUP,
   DEFAULT_THEME_MODE,
   ERROR_CODES,
   PREFERENCES_FILE_NAME,
@@ -23,11 +24,13 @@ import { setAutoDownload } from './updaterService'
 interface Preferences {
   themeMode: ThemeMode
   autoDownloadUpdates: boolean
+  installUpdatesOnStartup: boolean
 }
 
 const DEFAULT_PREFERENCES: Preferences = {
   themeMode: DEFAULT_THEME_MODE,
-  autoDownloadUpdates: DEFAULT_AUTO_DOWNLOAD_UPDATES
+  autoDownloadUpdates: DEFAULT_AUTO_DOWNLOAD_UPDATES,
+  installUpdatesOnStartup: DEFAULT_INSTALL_UPDATES_ON_STARTUP
 }
 
 const preferencesFilePath = (): string => join(app.getPath('userData'), PREFERENCES_FILE_NAME)
@@ -45,7 +48,11 @@ async function readPreferences(): Promise<Preferences> {
       autoDownloadUpdates:
         typeof stored.autoDownloadUpdates === 'boolean'
           ? stored.autoDownloadUpdates
-          : DEFAULT_AUTO_DOWNLOAD_UPDATES
+          : DEFAULT_AUTO_DOWNLOAD_UPDATES,
+      installUpdatesOnStartup:
+        typeof stored.installUpdatesOnStartup === 'boolean'
+          ? stored.installUpdatesOnStartup
+          : DEFAULT_INSTALL_UPDATES_ON_STARTUP
     }
   } catch {
     // Archivo inexistente o corrupto: se usan los valores por defecto.
@@ -81,5 +88,16 @@ export async function setAutoDownloadUpdates(raw: unknown): Promise<boolean> {
   if (typeof raw !== 'boolean') throw new AppError(ERROR_CODES.VALIDATION_FAILED)
   await writePreferences({ ...(await readPreferences()), autoDownloadUpdates: raw })
   setAutoDownload(raw)
+  return raw
+}
+
+export async function getInstallOnStartup(): Promise<boolean> {
+  return (await readPreferences()).installUpdatesOnStartup
+}
+
+/** Se aplica en el siguiente arranque de la app. */
+export async function setInstallOnStartup(raw: unknown): Promise<boolean> {
+  if (typeof raw !== 'boolean') throw new AppError(ERROR_CODES.VALIDATION_FAILED)
+  await writePreferences({ ...(await readPreferences()), installUpdatesOnStartup: raw })
   return raw
 }

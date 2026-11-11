@@ -110,4 +110,15 @@ export function registerIpcHandlers(): void {
   handle(IPC_CHANNELS.UPDATES_CHECK, updaterService.checkForUpdates, local)
   handle(IPC_CHANNELS.UPDATES_DOWNLOAD, updaterService.downloadUpdate, local)
   handle(IPC_CHANNELS.UPDATES_INSTALL, updaterService.installUpdate, local)
+  handle(IPC_CHANNELS.UPDATES_SKIP_STARTUP, updaterService.skipStartupInstall, local)
+  handle(
+    IPC_CHANNELS.PREFERENCES_GET_INSTALL_ON_STARTUP,
+    preferencesService.getInstallOnStartup,
+    local
+  )
+  handle(
+    IPC_CHANNELS.PREFERENCES_SET_INSTALL_ON_STARTUP,
+    preferencesService.setInstallOnStartup,
+    local
+  )
 }

@@ -5,6 +5,7 @@ import {
   SETTINGS_TEXTS,
   UPDATE_PROGRESS_MAX,
   UPDATE_STATUS,
+  UPDATE_INSTALL_FAILED_TEXT,
   UPDATE_STATUS_TEXTS,
   type UpdateStatus
 } from '@shared/constants'
@@ -26,7 +27,8 @@ const CHECK_DISABLED: readonly UpdateStatus[] = [
   UPDATE_STATUS.UNSUPPORTED,
   UPDATE_STATUS.CHECKING,
   UPDATE_STATUS.DOWNLOADING,
-  UPDATE_STATUS.DOWNLOADED
+  UPDATE_STATUS.DOWNLOADED,
+  UPDATE_STATUS.INSTALLING
 ]
 
 function SectionHeader({ title, description }: { title: string; description: string }) {
@@ -41,7 +43,9 @@ function SectionHeader({ title, description }: { title: string; description: str
 export function SettingsPage() {
   const update = useUpdateStore((state) => state.update)
   const autoDownload = useUpdateStore((state) => state.autoDownload)
-  const { check, download, install, setAutoDownload } = useUpdateStore.getState()
+  const installOnStartup = useUpdateStore((state) => state.installOnStartup)
+  const { check, download, install, setAutoDownload, setInstallOnStartup } =
+    useUpdateStore.getState()
   const [error, setError] = useState<string | null>(null)
 
   const run = (action: () => Promise<void>) => async () => {
@@ -71,7 +75,7 @@ export function SettingsPage() {
             title={SETTINGS_TEXTS.UPDATES_TITLE}
             description={SETTINGS_TEXTS.UPDATES_DESCRIPTION}
           />
-          {!update || autoDownload === null ? (
+          {!update || autoDownload === null || installOnStartup === null ? (
             <UpdatesSectionSkeleton />
           ) : (
             <div className="flex flex-col gap-6">
@@ -80,6 +84,12 @@ export function SettingsPage() {
                 hint={SETTINGS_TEXTS.AUTO_DOWNLOAD_HINT}
                 checked={autoDownload}
                 onChange={(value) => void run(() => setAutoDownload(value))()}
+              />
+              <Toggle
+                label={SETTINGS_TEXTS.INSTALL_ON_STARTUP_LABEL}
+                hint={SETTINGS_TEXTS.INSTALL_ON_STARTUP_HINT}
+                checked={installOnStartup}
+                onChange={(value) => void run(() => setInstallOnStartup(value))()}
               />
 
               <div className="flex flex-col gap-4 rounded-neu-sm p-5 shadow-neu-inset">
@@ -107,6 +117,11 @@ export function SettingsPage() {
                 >
                   {UPDATE_STATUS_TEXTS[update.status](update.availableVersion)}
                 </p>
+                {update.installFailed && (
+                  <p role="alert" className="text-xs font-semibold text-danger">
+                    {UPDATE_INSTALL_FAILED_TEXT}
+                  </p>
+                )}
                 {update.status === UPDATE_STATUS.DOWNLOADING && (
                   <ProgressBar
                     value={update.progress}
@@ -134,10 +149,12 @@ export function SettingsPage() {
                     {SETTINGS_TEXTS.DOWNLOAD}
                   </Button>
                 )}
-                {update.status === UPDATE_STATUS.DOWNLOADED && (
+                {(update.status === UPDATE_STATUS.DOWNLOADED ||
+                  update.status === UPDATE_STATUS.INSTALLING) && (
                   <Button
                     variant={BUTTON_VARIANTS.PRIMARY}
                     icon={<RotateCcw className="size-4" />}
+                    loading={update.status === UPDATE_STATUS.INSTALLING}
                     onClick={run(install)}
                   >
                     {SETTINGS_TEXTS.RESTART_AND_INSTALL}

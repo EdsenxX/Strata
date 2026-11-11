@@ -63,13 +63,16 @@ const api: StrataApi = {
     getTheme: invoke(IPC_CHANNELS.PREFERENCES_GET_THEME),
     setTheme: invoke(IPC_CHANNELS.PREFERENCES_SET_THEME),
     getAutoDownloadUpdates: invoke(IPC_CHANNELS.PREFERENCES_GET_AUTO_DOWNLOAD_UPDATES),
-    setAutoDownloadUpdates: invoke(IPC_CHANNELS.PREFERENCES_SET_AUTO_DOWNLOAD_UPDATES)
+    setAutoDownloadUpdates: invoke(IPC_CHANNELS.PREFERENCES_SET_AUTO_DOWNLOAD_UPDATES),
+    getInstallOnStartup: invoke(IPC_CHANNELS.PREFERENCES_GET_INSTALL_ON_STARTUP),
+    setInstallOnStartup: invoke(IPC_CHANNELS.PREFERENCES_SET_INSTALL_ON_STARTUP)
   },
   updates: {
     getState: invoke(IPC_CHANNELS.UPDATES_GET_STATE),
     check: invoke(IPC_CHANNELS.UPDATES_CHECK),
     download: invoke(IPC_CHANNELS.UPDATES_DOWNLOAD),
     install: invoke(IPC_CHANNELS.UPDATES_INSTALL),
+    skipStartup: invoke(IPC_CHANNELS.UPDATES_SKIP_STARTUP),
     onStateChange: (listener) => {
       const handler = (_event: Electron.IpcRendererEvent, state: UpdateState) => listener(state)
       ipcRenderer.on(IPC_EVENTS.UPDATES_STATE_CHANGED, handler)

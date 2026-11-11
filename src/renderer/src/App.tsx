@@ -14,6 +14,7 @@ import { TaskDetailPage } from './pages/TaskDetailPage'
 import { useAuthStore } from './stores/authStore'
 import { useThemeStore } from './stores/themeStore'
 import { useUpdateStore } from './stores/updateStore'
+import { StartupUpdateScreen } from './components/layout/StartupUpdateScreen'
 import { UpdateBanner } from './components/layout/UpdateBanner'
 
 /**
@@ -51,6 +52,7 @@ export function App() {
         <Route path="*" element={<Navigate to={ROUTES.ENVIRONMENTS} replace />} />
       </Routes>
       <UpdateBanner />
+      <StartupUpdateScreen />
     </HashRouter>
   )
 }

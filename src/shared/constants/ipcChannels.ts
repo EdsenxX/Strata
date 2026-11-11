@@ -46,11 +46,14 @@ export const IPC_CHANNELS = {
   PREFERENCES_SET_THEME: 'preferences:set-theme',
   PREFERENCES_GET_AUTO_DOWNLOAD_UPDATES: 'preferences:get-auto-download-updates',
   PREFERENCES_SET_AUTO_DOWNLOAD_UPDATES: 'preferences:set-auto-download-updates',
+  PREFERENCES_GET_INSTALL_ON_STARTUP: 'preferences:get-install-on-startup',
+  PREFERENCES_SET_INSTALL_ON_STARTUP: 'preferences:set-install-on-startup',
 
   UPDATES_GET_STATE: 'updates:get-state',
   UPDATES_CHECK: 'updates:check',
   UPDATES_DOWNLOAD: 'updates:download',
-  UPDATES_INSTALL: 'updates:install'
+  UPDATES_INSTALL: 'updates:install',
+  UPDATES_SKIP_STARTUP: 'updates:skip-startup'
 } as const
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS]
