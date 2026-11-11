@@ -7,6 +7,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [0.9.1] - 2026-11-11
+
 ### Cambiado
 
 - Nuevo ícono de la app (tres capas sobre un cuadro neumórfico) en lugar del ícono por defecto de Electron, en la
