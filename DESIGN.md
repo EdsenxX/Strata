@@ -38,7 +38,12 @@ solo consumen las utilidades de Tailwind generadas a partir de ellos.
 | `--neu-info`            | `text-info`                 | `#3f86d8`  | `#6fb0f5`  | En progreso, cronómetro activo |
 | `--neu-overlay`         | `bg-overlay`                | tinta 25 % | negro 45 % | Fondo de modales               |
 
-El tema oscuro se activa automáticamente con `prefers-color-scheme: dark`.
+### Tema claro / oscuro
+
+El usuario elige **Claro**, **Oscuro** o **Sistema** con `ThemeSwitcher` (barra lateral y pantallas de acceso).
+La elección se aplica en el proceso principal con `nativeTheme.themeSource`, que hace que Chromium cambie
+`prefers-color-scheme`. Por eso el CSS solo define los tokens oscuros bajo `@media (prefers-color-scheme: dark)`:
+no uses clases `dark:` ni atributos de tema en componentes; basta con consumir los tokens.
 
 ### Sombras
 
@@ -82,6 +87,7 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 | `Button`                                               | Variantes `BUTTON_VARIANTS` (`neutral`, `primary`, `danger`, `ghost`), tamaños `BUTTON_SIZES`, `icon`, `iconOnly` (requiere `aria-label`) y `loading`. |
 | `Card`                                                 | Superficie elevada con `rounded-neu` y `p-6`.                                                                                                          |
 | `TextField` / `TextArea`                               | Campo hundido con etiqueta, error, pista y contenido a la derecha (`trailing`). `insetFieldClasses` para inputs sueltos.                               |
+| `FieldLabel` / `RequiredFieldsNote`                    | Etiqueta con `*` rojo para campos `required` y leyenda "\* Campos obligatorios" bajo los campos.                                                       |
 | `PasswordField`                                        | `TextField` con botón mostrar/ocultar.                                                                                                                 |
 | `PasswordChecklist`                                    | Checklist en vivo de `evaluatePassword()`.                                                                                                             |
 | `Modal`                                                | Diálogo con overlay; cierra con Escape o clic fuera.                                                                                                   |
@@ -90,6 +96,7 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
 | `ProgressBar`                                          | Pista hundida con relleno `success`.                                                                                                                   |
 | `EmptyState`, `LoadingState`, `ErrorBanner`, `Spinner` | Estados vacíos, de carga y de error.                                                                                                                   |
 | `VersionBadge`                                         | Versión de la app (`__APP_VERSION__`).                                                                                                                 |
+| `ThemeSwitcher`                                        | Selector de tema (claro, oscuro, sistema) con la opción activa hundida.                                                                                |
 
 ### Composición
 
@@ -107,6 +114,10 @@ Todos en [`src/renderer/src/components/`](src/renderer/src/components/). Reutil�
   `stopPropagation`.
 - **Selección**: el elemento activo se hunde (`shadow-neu-inset`) y toma `text-accent` (fases, filtros, navegación,
   estados).
+- **Campos obligatorios**: pasa `required` a `TextField`/`TextArea`/`PasswordField`; la etiqueta muestra un `*`
+  en `text-danger` (`FieldLabel`). Todo formulario con al menos un campo obligatorio cierra sus campos con
+  `RequiredFieldsNote` ("\* Campos obligatorios"). Nunca marques los opcionales con "(opcional)". Los formularios usan
+  `noValidate` y muestran el error de campo vacío (`VALIDATION_TEXTS.REQUIRED`) debajo del campo.
 - **Acciones destructivas**: siempre con `ConfirmDialog` y variante `danger`.
 - **Guardado automático**: el editor muestra "Guardando…/Guardado" en `text-muted`; error en `text-danger`.
 - **Diseño responsivo**: ventana mínima 960 × 640; el detalle de tarea pasa a una columna en anchos menores a `lg`.

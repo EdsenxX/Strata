@@ -2,6 +2,10 @@
 
 > Tus entornos, proyectos y tareas en capas claras.
 
+[![Descargar para Windows](https://img.shields.io/badge/Windows-Descargar_.exe-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/EdsenxX/Strata/releases/latest/download/Strata-Setup-x64.exe)
+[![Descargar para Ubuntu (.deb)](https://img.shields.io/badge/Ubuntu-Descargar_.deb-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://github.com/EdsenxX/Strata/releases/latest/download/Strata-x64.deb)
+[![Descargar AppImage](https://img.shields.io/badge/Linux-Descargar_AppImage-333333?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/EdsenxX/Strata/releases/latest/download/Strata-x64.AppImage)
+
 Strata es una aplicación de escritorio para **Windows** y **Ubuntu** que organiza el trabajo en capas:
 
 ```
@@ -11,7 +15,7 @@ GGTech      TFT Hub      Desarrollo   Conectar socket de partidas
 
 El nombre viene de _strata_ (estratos): cada nivel es una capa que envuelve a la siguiente.
 
-## Funcionalidades (v0.1.0)
+## Funcionalidades
 
 - **Cuentas de usuario**: registro con nombre(s), apellido paterno, apellido materno, correo, usuario y
   contraseña robusta con checklist en vivo; inicio de sesión con correo o usuario; sesión recordada de forma cifrada.
@@ -22,10 +26,29 @@ El nombre viene de _strata_ (estratos): cada nivel es una capa que envuelve a la
   - Título y contenido en Markdown con editor de bloques estilo Notion (escribe `/` para insertar bloques).
   - Estados: Pendiente, En progreso, En pausa, Completada.
   - Tiempo invertido con cronómetro (iniciar/pausar, sobrevive a cierres de la app) o captura manual.
-- **Diseño neumórfico** con tema claro/oscuro automático y fuentes locales (Plus Jakarta Sans, JetBrains Mono).
+- **Diseño neumórfico** con tema claro, oscuro o el del sistema (a elección, se recuerda por equipo) y fuentes locales (Plus Jakarta Sans, JetBrains Mono).
 - **Versión visible** siempre en la interfaz.
 
-## Requisitos
+## Descargas
+
+Los instaladores de la última versión siempre están en
+[**Releases**](https://github.com/EdsenxX/Strata/releases/latest):
+
+| Sistema                    | Archivo                                                                                                   | Instalación                                 |
+| -------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Windows 10/11 (x64)        | [`Strata-Setup-x64.exe`](https://github.com/EdsenxX/Strata/releases/latest/download/Strata-Setup-x64.exe) | Ejecuta el instalador.                      |
+| Ubuntu / Debian (x64)      | [`Strata-x64.deb`](https://github.com/EdsenxX/Strata/releases/latest/download/Strata-x64.deb)             | `sudo apt install ./Strata-x64.deb`         |
+| Otras distribuciones Linux | [`Strata-x64.AppImage`](https://github.com/EdsenxX/Strata/releases/latest/download/Strata-x64.AppImage)   | `chmod +x Strata-x64.AppImage` y ejecútalo. |
+
+Notas:
+
+- **Windows**: el instalador aún no está firmado, así que SmartScreen puede advertir. Elige
+  _Más información → Ejecutar de todas formas_.
+- **Ubuntu 24.04 o superior**: usa el `.deb`. Instala un perfil de AppArmor para el sandbox de Chromium; el
+  AppImage no puede hacerlo y no arranca con la restricción de _user namespaces_ de Ubuntu.
+- Tras instalar, configura la conexión a MongoDB (ver [Instalación de la app empaquetada](#instalación-de-la-app-empaquetada)).
+
+## Requisitos (desarrollo)
 
 - Node.js 22 o superior y npm 10.
 - Un cluster de MongoDB (por ejemplo MongoDB Atlas) y su cadena de conexión.
@@ -76,7 +99,11 @@ o junto al ejecutable. Si falta, la app muestra un aviso con las rutas buscadas.
 - [CHANGELOG.md](CHANGELOG.md): historial de versiones.
 - Skills de agentes en [`.agents/skills/`](.agents/skills/).
 
-## Versionado
+## Versionado y releases
 
 Semantic Versioning (`MAJOR.MINOR.PATCH`). La versión se define únicamente en `package.json` y se muestra en
-la interfaz. Cada release lleva su etiqueta `vX.Y.Z` en git.
+la interfaz. Cada release lleva su etiqueta `vX.Y.Z` en git (skill [`versioning`](.agents/skills/versioning/SKILL.md)).
+
+Al subir una etiqueta `vX.Y.Z`, el workflow [`release.yml`](.github/workflows/release.yml) compila los instaladores
+en Windows y Ubuntu y los publica en GitHub Releases con las notas de `CHANGELOG.md`. Los nombres de archivo no
+llevan versión, así que los enlaces de este README siempre descargan la última release.

@@ -58,6 +58,7 @@ src/
 │   ├── services/      # Lógica de negocio por dominio
 │   ├── ipc/           # Registro de canales IPC
 │   ├── session/       # Sesión en memoria + persistencia cifrada (safeStorage)
+│   ├── services/preferencesService.ts  # Preferencias locales (tema) en userData/preferences.json
 │   └── utils/         # Validaciones defensivas de entrada
 ├── preload/           # Puente seguro: expone window.strata
 └── renderer/          # Interfaz React
@@ -109,17 +110,18 @@ src/
 
 Ninguna cadena o número con significado de negocio va suelto en el código:
 
-| Necesitas…              | Usa                                                                      |
-| ----------------------- | ------------------------------------------------------------------------ |
-| Texto visible           | `src/shared/constants/texts.ts` (`*_TEXTS`, `ERROR_MESSAGES`, etiquetas) |
-| Estados de tarea        | `TASK_STATUS`, `TASK_STATUS_VALUES` (`taskStatus.ts`)                    |
-| Canales IPC             | `IPC_CHANNELS` (`ipcChannels.ts`)                                        |
-| Rutas                   | `ROUTES`, `buildRoute`, `QUERY_PARAMS` (`routes.ts`)                     |
-| Límites y regex         | `FIELD_LIMITS`, `PATTERNS`, `PASSWORD_POLICY` (`validation.ts`)          |
-| Colecciones/modelos/env | `MODEL_NAMES`, `COLLECTION_NAMES`, `ENV_KEYS` (`database.ts`)            |
-| Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                          |
-| Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)            |
-| Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)    |
+| Necesitas…              | Usa                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------ |
+| Texto visible           | `src/shared/constants/texts.ts` (`*_TEXTS`, `ERROR_MESSAGES`, etiquetas)       |
+| Estados de tarea        | `TASK_STATUS`, `TASK_STATUS_VALUES` (`taskStatus.ts`)                          |
+| Canales IPC             | `IPC_CHANNELS` (`ipcChannels.ts`)                                              |
+| Rutas                   | `ROUTES`, `buildRoute`, `QUERY_PARAMS` (`routes.ts`)                           |
+| Límites y regex         | `FIELD_LIMITS`, `PATTERNS`, `PASSWORD_POLICY` (`validation.ts`)                |
+| Colecciones/modelos/env | `MODEL_NAMES`, `COLLECTION_NAMES`, `ENV_KEYS` (`database.ts`)                  |
+| Códigos de error        | `ERROR_CODES` (`errorCodes.ts`)                                                |
+| Tiempos y UI            | `UI_TIMINGS`, `SAVE_STATUS`, `ASYNC_STATUS`, `KEYS` (`ui.ts`)                  |
+| Tema y preferencias     | `THEME_MODES`, `THEME_MODE_VALUES`, `PREFERENCES_FILE_NAME` (`preferences.ts`) |
+| Seguridad/sesión        | `BCRYPT_SALT_ROUNDS`, `SESSION_CONFIG`, `AUTH_STATUS` (`security.ts`)          |
 
 - Importa desde `@shared/constants` (barril `index.ts`).
 - Si un dominio nuevo necesita constantes, crea un archivo nuevo en `src/shared/constants/` y expórtalo en `index.ts`.
@@ -148,6 +150,10 @@ Ninguna cadena o número con significado de negocio va suelto en el código:
 - La interfaz muestra la versión siempre (barra lateral y pantallas de acceso) vía `__APP_VERSION__`.
 - Cada release: commit `chore(release): vX.Y.Z` + etiqueta anotada `vX.Y.Z` + entrada en `CHANGELOG.md`.
 - Usa la skill [`versioning`](.agents/skills/versioning/SKILL.md); nunca edites la versión a mano.
+- Subir una etiqueta `vX.Y.Z` dispara [`.github/workflows/release.yml`](.github/workflows/release.yml): compila en
+  Windows y Ubuntu y publica `Strata-Setup-x64.exe`, `Strata-x64.deb` y `Strata-x64.AppImage` en GitHub Releases.
+  Los nombres no llevan versión porque el README enlaza a `releases/latest/download/<archivo>`; no los cambies en
+  `electron-builder.yml` sin actualizar el README.
 
 ## Skills
 
@@ -170,6 +176,8 @@ Las skills viven en `.agents/skills/<nombre>/SKILL.md` (convención abierta de A
 
 - La app desktop se conecta **directamente** al cluster: quien tenga el `.env` tiene acceso a la base de datos.
   Para distribuirla a terceros conviene poner una API intermedia.
+- El tema se aplica con `nativeTheme.themeSource` desde el proceso principal; el CSS reacciona vía
+  `prefers-color-scheme`. Las preferencias no requieren MongoDB (`handle(..., { requiresDatabase: false })`).
 - `HashRouter` es obligatorio: en producción la interfaz se carga desde `file://`.
 - El editor Crepe es no controlado: para cargar otro documento cambia su `key`, no su valor.
 - La sesión persistente usa `safeStorage`; en Linux sin llavero (`basic_text`) la sesión no se guarda en disco.
